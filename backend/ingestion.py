@@ -2,7 +2,8 @@ import os
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import CharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+# from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from pinecone import *
 
@@ -19,7 +20,7 @@ def create_pinecone_index(user):
     if index_name not in existing_indexes:
         pc.create_index(
             name=index_name,
-            dimension=1536,
+            dimension=768,
             metric="euclidean",
             spec=ServerlessSpec(
                 cloud="aws",
@@ -39,7 +40,7 @@ def split_text(document, chunk_size=1000, chunk_overlap=100):
 
 def create_embeddings():
     """Create an embedding model."""
-    return OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
+    return GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
 
 def store_embeddings(texts, embeddings, user, collection):
     """Store embeddings in the user's Pinecone index under the specified collection."""

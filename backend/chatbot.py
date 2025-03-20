@@ -1,7 +1,8 @@
 import os
 import warnings
 from dotenv import load_dotenv
-from langchain_openai import OpenAIEmbeddings
+# from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain_community.chat_models import ChatOpenAI
 from langchain_pinecone import PineconeVectorStore
@@ -13,13 +14,19 @@ chat_history = {}
 
 def initialize_chatbot(user_index):
     """Initialize chatbot for a specific user's index."""
-    embeddings = OpenAIEmbeddings(openai_api_type=os.environ.get("OPENAI_API_KEY"))
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
     
     vectorstore = PineconeVectorStore(
         index_name=user_index, embedding=embeddings
     )
 
-    chat = ChatOpenAI(verbose=True, temperature=0, model_name="gpt-3.5-turbo")
+    chat = ChatGoogleGenerativeAI(
+        model="gemini-1.5-flashlight",  # Use the Gemini model
+        temperature=0,
+        google_api_key=os.getenv("GOOGLE_API_KEY"),
+        verbose=True
+    )
+
 
     qa = ConversationalRetrievalChain.from_llm(
         llm=chat, chain_type="stuff", retriever=vectorstore.as_retriever()
