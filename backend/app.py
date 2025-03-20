@@ -49,8 +49,14 @@ def query():
     if not query_text:
         return jsonify({"error": "Query text is required"}), 400
     
-    response = query_pinecone(query_text, user, collection)
-    return jsonify({"response": response})
+    try:
+        print(f"Querying Pinecone with user: {user}, collection: {collection}, query: {query_text}")
+        response = query_pinecone(query_text, f'{user}-index', collection)
+        print(f"Query response: {response}")
+        return jsonify({"response": response})
+    except Exception as e:
+        print(f"Error querying Pinecone: {e}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     os.makedirs("uploads", exist_ok=True)
