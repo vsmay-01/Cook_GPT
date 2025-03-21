@@ -7,6 +7,10 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain.schema import Document
 from pinecone import Pinecone, ServerlessSpec
+from pdf2image import convert_from_path
+from PIL import Image
+import pytesseract
+import io
 
 load_dotenv()
 
@@ -16,7 +20,6 @@ pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 def create_pinecone_index(user):
     """Create a new Pinecone index for the user if it doesn't exist."""
     index_name = f"{user}-index"
-    
     try:
         existing_indexes = pc.list_indexes().names()
         if index_name not in existing_indexes:
@@ -29,23 +32,47 @@ def create_pinecone_index(user):
     except Exception as e:
         print(f"Error creating Pinecone index: {e}")
 
+
+def extract_images_from_pdf(pdf_path, output_folder="extracted_images"):
+    """Extract images from a PDF and save them as separate files."""
+    os.makedirs(output_folder, exist_ok=True)
+    images = convert_from_path(pdf_path)
+    image_paths = []
+    
+    for i, image in enumerate(images):
+        image_path = os.path.join(output_folder, f"{os.path.basename(pdf_path)}_image_{i}.png")
+        image.save(image_path, "PNG")
+        image_paths.append(image_path)
+    
+    return image_paths
+
+def extract_text_from_image(image_path):
+    """Extract text from an image using OCR."""
+    image = Image.open(image_path)
+    return pytesseract.image_to_string(image)
+
 def load_document(file_path):
     """Load a document from file."""
     try:
         if file_path.endswith(".pdf"):
             loader = PyPDFLoader(file_path)
+            text_data = loader.load()
+            image_paths = extract_images_from_pdf(file_path)
+            return text_data, image_paths
         elif file_path.endswith(".txt"):
             loader = TextLoader(file_path)
         elif file_path.endswith(".csv"):
             loader = CSVLoader(file_path)
         elif file_path.endswith((".mp3", ".wav")):
-            return transcribe_audio(file_path)
+            return transcribe_audio(file_path), []
+        elif file_path.endswith((".png", ".jpg", ".jpeg")):
+            return [Document(page_content=extract_text_from_image(file_path))], []
         else:
             raise ValueError("Unsupported file format")
-        return loader.load()
+        return loader.load(), []
     except Exception as e:
         print(f"Error loading document: {e}")
-        return []
+        return [], []
 
 def transcribe_audio(file_path):
     """Transcribe audio file into text using SpeechRecognition."""
@@ -80,10 +107,15 @@ def create_embeddings():
         return None
 
 def store_embeddings(texts, embeddings, user, collection):
-    """Store embeddings in the user's Pinecone index under the specified collection."""
+    """Store embeddings in Pinecone."""
     index_name = f"{user}-index"
     try:
-        vector_store = PineconeVectorStore.from_documents(texts, embeddings, index_name=index_name, namespace=collection)
+        vector_store = PineconeVectorStore.from_documents(
+            texts, 
+            embeddings, 
+            index_name=index_name, 
+            namespace=collection
+        )
         print(f"Stored {len(texts)} embeddings in Pinecone index '{index_name}' under namespace '{collection}'")
     except Exception as e:
         print(f"Error storing embeddings: {e}")
@@ -91,11 +123,10 @@ def store_embeddings(texts, embeddings, user, collection):
 def ingest_file(file_path, user, collection):
     """Process and store a file's data in Pinecone."""
     try:
-        # Ensure the user has a Pinecone index
         create_pinecone_index(user)
 
         # Process file
-        document = load_document(file_path)
+        document, image_paths = load_document(file_path)
         if not document:
             return False, "Failed to load document"
 
@@ -103,19 +134,24 @@ def ingest_file(file_path, user, collection):
         if not texts:
             return False, "Failed to split document into chunks"
 
-        print(f"Created {len(texts)} chunks")
+        print(f"Created {len(texts)} text chunks")
 
         # Create embeddings
         embeddings = create_embeddings()
         if embeddings is None:
             return False, "Failed to create embeddings"
 
-        # Store embeddings in Pinecone
+        # Store text embeddings in Pinecone
         store_embeddings(texts, embeddings, user, collection)
+        
+        # Process images if present
+        for image_path in image_paths:
+            extracted_text = extract_text_from_image(image_path)
+            image_doc = Document(page_content=extracted_text, metadata={"type": "image", "file": image_path})
+            store_embeddings([image_doc], embeddings, user, collection)
+            print(f"Stored OCR-extracted text from {image_path}")
 
-        # Remove the temporary file after processing
         os.remove(file_path)
-
         return True, "File processed and stored successfully"
     except Exception as e:
         return False, f"Error processing file: {e}"

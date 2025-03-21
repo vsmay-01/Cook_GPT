@@ -9,3 +9,5 @@ SpeechRecognition==3.10.0
 Werkzeug>=2.2.2  # Updated to remove the conflict
 flask_cors
 pypdf
+pdf2image
+pytesseract
