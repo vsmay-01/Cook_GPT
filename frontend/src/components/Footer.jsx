@@ -1,17 +1,18 @@
-import { resourcesLinks, platformLinks, communityLinks } from "../constants";
+import { aiToolsLinks, integrationsLinks, supportLinks } from "../constants";
 
 const Footer = () => {
   return (
-    <footer className="mt-20 border-t py-10 border-neutral-700 bg-neutral-950">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 text-neutral-300">
+    <footer className="mt-20 border-t border-neutral-700 bg-neutral-950 py-14 px-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 text-neutral-300">
+        {/* AI Tools Section */}
         <div>
-          <h3 className="text-lg font-semibold mb-4 text-white">Resources</h3>
-          <ul className="space-y-2">
-            {resourcesLinks.map((link, index) => (
+          <h3 className="text-xl font-semibold mb-5 text-white">AI Tools</h3>
+          <ul className="space-y-3">
+            {aiToolsLinks.map((link, index) => (
               <li key={index}>
                 <a
                   href={link.href}
-                  className="hover:text-blue-400 transition duration-200"
+                  className="hover:text-blue-400 transition-colors duration-300"
                 >
                   {link.text}
                 </a>
@@ -19,14 +20,16 @@ const Footer = () => {
             ))}
           </ul>
         </div>
+
+        {/* Integrations Section */}
         <div>
-          <h3 className="text-lg font-semibold mb-4 text-white">Platform</h3>
-          <ul className="space-y-2">
-            {platformLinks.map((link, index) => (
+          <h3 className="text-xl font-semibold mb-5 text-white">Integrations</h3>
+          <ul className="space-y-3">
+            {integrationsLinks.map((link, index) => (
               <li key={index}>
                 <a
                   href={link.href}
-                  className="hover:text-purple-400 transition duration-200"
+                  className="hover:text-purple-400 transition-colors duration-300"
                 >
                   {link.text}
                 </a>
@@ -34,14 +37,16 @@ const Footer = () => {
             ))}
           </ul>
         </div>
+
+        {/* Support & Community Section */}
         <div>
-          <h3 className="text-lg font-semibold mb-4 text-white">Community</h3>
-          <ul className="space-y-2">
-            {communityLinks.map((link, index) => (
+          <h3 className="text-xl font-semibold mb-5 text-white">Support & Community</h3>
+          <ul className="space-y-3">
+            {supportLinks.map((link, index) => (
               <li key={index}>
                 <a
                   href={link.href}
-                  className="hover:text-blue-400 transition duration-200"
+                  className="hover:text-blue-400 transition-colors duration-300"
                 >
                   {link.text}
                 </a>
@@ -50,8 +55,10 @@ const Footer = () => {
           </ul>
         </div>
       </div>
-      <p className="text-center text-neutral-500 mt-8">
-        © {new Date().getFullYear()} CookAI. All rights reserved.
+
+      {/* Footer Bottom Text */}
+      <p className="text-center text-neutral-500 mt-12 text-sm">
+        🚀 Powered by AI. © {new Date().getFullYear()} CookAI. All Rights Reserved.
       </p>
     </footer>
   );

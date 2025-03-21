@@ -140,3 +140,19 @@ export const communityLinks = [
   { href: "#", text: "Hackathons" },
   { href: "#", text: "Jobs" },
 ];
+
+export const aiToolsLinks = [
+  { href: "#", text: "AI Summarizer" },
+  { href: "#", text: "Text Analyzer" },
+];
+
+export const integrationsLinks = [
+  { href: "#", text: "API Access" },
+  { href: "#", text: "Third-party Plugins" },
+];
+
+export const supportLinks = [
+  { href: "#", text: "Help Center" },
+  { href: "#", text: "Community Forum" },
+];
+

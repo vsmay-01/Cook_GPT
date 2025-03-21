@@ -23,7 +23,6 @@ const App = () => {
         </SignedIn>
       </header> */}
       <div>
-        {}
         {/* <LandingPage /> */}
         <ChatInterface/>
       </div>
