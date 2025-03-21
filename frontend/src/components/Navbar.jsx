@@ -2,6 +2,12 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "../assets/logo.png";
 import { navItems } from "../constants";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -27,7 +33,12 @@ const Navbar = () => {
           </ul>
           <div className="hidden lg:flex justify-center space-x-12 items-center">
             <a href="#" className="py-2 px-3 border rounded-md">
-              Sign In
+              <SignedOut>
+                <SignInButton />
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
             </a>
             <a
               href="#"

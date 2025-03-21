@@ -1,16 +1,28 @@
-import React from 'react'
-import LandingPage from './LandingPage'
-import ChatInterface from './ChatBotPage/ChatInterface'
+import React from "react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
+import LandingPage from "./LandingPage";
 
 const App = () => {
   return (
-    <div>
-      <LandingPage/>
-      {/* <ChatInterface/> */}
-      
-      
-    </div>
-  )
-}
+    <>
+      <header>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+      </header>
+      <div>
+        <LandingPage />
+      </div>
+    </>
+  );
+};
 
-export default App
+export default App;
