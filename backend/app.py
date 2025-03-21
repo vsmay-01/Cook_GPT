@@ -74,8 +74,36 @@ def get_index_info():
         return jsonify(index_info)
     except Exception as e:
         print(f"Error fetching index info: {e}")
-        return jsonify({"error": str(e)}), 500    
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     os.makedirs("uploads", exist_ok=True)
     app.run(debug=True)
+    
+@app.route("/delete-file", methods=["POST"])
+def delete_file():
+    """Delete vectors associated with a specific file in a namespace for a user."""
+    data = request.get_json()
+    user = data.get("user")
+    namespace = data.get("namespace")
+    filename = data.get("filename")
+    
+    if not user:
+        return jsonify({"error": "User identifier is required"}), 400
+    if not namespace:
+        return jsonify({"error": "Namespace identifier is required"}), 400
+    if not filename:
+        return jsonify({"error": "Filename is required"}), 400
+    
+    try:
+        success, message = delete_file_vectors(user, namespace, filename)
+        if not success:
+            return jsonify({"error": message}), 404
+        return jsonify({"message": message})
+    except Exception as e:
+        print(f"Error deleting file: {e}")
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    os.makedirs("uploads", exist_ok=True)
+    app.run(debug=True)    
