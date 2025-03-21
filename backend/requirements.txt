@@ -1,8 +1,9 @@
-Flask==2.0.3
-python-dotenv==0.19.2
-langchain-community==0.0.1
-langchain-text-splitters==0.0.1
-langchain-google-genai==0.0.1
-langchain-pinecone==0.0.1
-pinecone-client==2.0.0
-SpeechRecognition==3.8.1
+Flask==2.2.5
+python-dotenv==1.0.1
+langchain-community>=0.0.13,<0.3.0
+langchain-text-splitters>=0.1.28,<0.3.0
+langchain-google-genai>=0.0.8  # Latest stable version
+langchain-pinecone>=0.0.5  # More recent version
+pinecone-client>=3,<4
+SpeechRecognition==3.10.0
+Werkzeug>=2.2.2  # Updated to remove the conflict
