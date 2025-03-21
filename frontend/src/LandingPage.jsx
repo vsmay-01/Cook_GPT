@@ -17,17 +17,17 @@ const LandingPage = () => {
         muted
         className="absolute top-0 left-0 w-full h-full object-cover -z-10"
       >
-        <source src={videoBg} type="video/mp4" />
+        {/* <source src={videoBg} type="video/mp4" /> */}
         Your browser does not support the video tag.
       </video>
       
       <Navbar />
       <div className="max-w-7xl mx-auto pt-20 px-6 relative z-10">
-        {/* <HeroSection />
+        <HeroSection />
         <FeatureSection />
         <Workflow />
         <Pricing />
-        <Testimonials /> */}
+        {/* <Testimonials /> */}
    
         <Footer />
       </div>
