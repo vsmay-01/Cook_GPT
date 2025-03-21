@@ -23,11 +23,11 @@ const LandingPage = () => {
       
       <Navbar />
       <div className="max-w-7xl mx-auto pt-20 px-6 relative z-10">
-        {/* <HeroSection />
+        <HeroSection />
         <FeatureSection />
         <Workflow />
         <Pricing />
-        <Testimonials /> */}
+        {/* <Testimonials /> */}
    
         <Footer />
       </div>
