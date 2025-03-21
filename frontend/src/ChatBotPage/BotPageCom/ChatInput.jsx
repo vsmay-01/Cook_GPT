@@ -12,6 +12,11 @@ export default function Dashboard() {
   const [userInput, setUserInput] = useState("");
   const [response, setResponse] = useState(null);
   const [collectionName, setCollectionName] = useState("");
+  const [msg , setMsg] = useState([]);
+  const [collection , selectedCollection] = useState("abcd");
+
+
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -65,22 +70,21 @@ export default function Dashboard() {
       setMessage("Please enter a query");
       return;
     }
-
-    if (!collectionName.trim()) {
-      setMessage("Please enter a collection name for querying");
-      return;
-    }
-
+    
     setLoading(true);
     setMessage("Querying...");
-
+    
     try {
       const response = await axios.post("http://127.0.0.1:5000/query", {
-        user: userName,
-        collection: collectionName,
+        user: "princekumar04", // Match exactly what's in your Postman example
+        collection: collectionName || "abcd", // Use the collection name from input or fallback to "abcd"
         query: userInput
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-
+      
       console.log("Query response:", response.data);
       setResponse(response.data.response);
       setMessage("Query completed successfully!");
@@ -91,7 +95,7 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="flex h-screen w-full">
       {/* Chat Area */}
@@ -147,6 +151,13 @@ export default function Dashboard() {
               Upload
             </button>
           </div>
+        </div>
+
+        {/* chat section */}
+        <div>
+            <h2 className="text-xl text-black">
+                {msg}
+            </h2>
         </div>
 
         {/* Query input */}
