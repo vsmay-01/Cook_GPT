@@ -1,9 +1,8 @@
-langchain
-openai
-pinecone-client
-langchain-pinecone
-langchain-openai
-langchain-community
-python-dotenv
-pypdf
-flask
+Flask==2.0.3
+python-dotenv==0.19.2
+langchain-community==0.0.1
+langchain-text-splitters==0.0.1
+langchain-google-genai==0.0.1
+langchain-pinecone==0.0.1
+pinecone-client==2.0.0
+SpeechRecognition==3.8.1
