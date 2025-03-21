@@ -2,12 +2,15 @@ import React from 'react'
 import Sidebar from './BotPageCom/Sidebar'
 import ChatInput from './BotPageCom/ChatInput'
 import ProfileSec from './BotPageCom/ProfileSec'
+import { SelectedCollectionProvider } from "../context/SelectedContext";
 
 const ChatInterface = () => {
   return (
+    <SelectedCollectionProvider>
     <div className='grid grid-cols-12 h-full'>
         <div className='col-span-2 flex items-center justify-center'>
-           <Sidebar/>
+       
+      <Sidebar />
         </div>
         <div className='col-span-8 flex items-center justify-center'>
           <ChatInput/>
@@ -16,6 +19,7 @@ const ChatInterface = () => {
            <ProfileSec className='absolute top-4 right-4' />
         </div>
     </div>
+    </SelectedCollectionProvider>
   )
 }
 
