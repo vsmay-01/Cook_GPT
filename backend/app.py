@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from chatbot import *  # Import chatbot functions
 from ingestion import *  # Import ingestion functions
+from pinecone_utils import *  # Import Pinecone functions
 from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)
@@ -60,6 +61,20 @@ def query():
     except Exception as e:
         print(f"Error querying Pinecone: {e}")
         return jsonify({"error": str(e)}), 500
+    
+@app.route("/index-info", methods=["GET"])
+def get_index_info():
+    """Retrieve metadata about the user's Pinecone index (namespaces, files, etc.)."""
+    user = request.args.get("user")
+    if not user:
+        return jsonify({"error": "User identifier is required"}), 400
+
+    try:
+        index_info = get_pinecone_index_info(user)
+        return jsonify(index_info)
+    except Exception as e:
+        print(f"Error fetching index info: {e}")
+        return jsonify({"error": str(e)}), 500    
 
 if __name__ == "__main__":
     os.makedirs("uploads", exist_ok=True)
