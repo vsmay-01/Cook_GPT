@@ -1,11 +1,8 @@
 import os
 import warnings
 from dotenv import load_dotenv
-# from langchain_openai import OpenAIEmbeddings
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
-# from langchain_google_vertexai import ChatVertexAI
 from langchain.chains import ConversationalRetrievalChain
-# from langchain_community.chat_models import ChatOpenAI
 from langchain_pinecone import PineconeVectorStore
 from langchain.prompts import PromptTemplate
 
@@ -25,26 +22,26 @@ def initialize_chatbot(user_index, collection_name):
     retriever = vectorstore.as_retriever()
 
     chat = ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",  # Use the Gemini model
+        model="gemini-2.0-flash",  # Use the Gemini model
         temperature=0,
         google_api_key=os.getenv("GOOGLE_API_KEY"),
         verbose=True
     )
-    # prompt_template = """
-    #     Answer the question based solely on the provided context stored in Pinecone. Do not use any external knowledge or general information. If the context is empty or insufficient, respond with: "I don’t have enough information to answer that based on the provided context."
+    prompt_template = """
+        Answer the question based solely on the provided context stored in Pinecone. Do not use any external knowledge or general information. If the context is empty or insufficient, respond with: "I don’t have enough information to answer that based on the provided context."
 
-    #     Context: {context}
-    #     Chat History: {chat_history}
-    #     Question: {question}
+        Context: {context}
+        Chat History: {chat_history}
+        Question: {question}
 
-    #     Answer:
-    #     """
-    # prompt = PromptTemplate(input_variables=["context", "chat_history", "question"], template=prompt_template)
+        Answer:
+        """
+    prompt = PromptTemplate(input_variables=["context", "chat_history", "question"], template=prompt_template)
     qa = ConversationalRetrievalChain.from_llm(
             llm=chat,
             chain_type="stuff",
             retriever=retriever,
-            # combine_docs_chain_kwargs={"prompt": prompt},
+            combine_docs_chain_kwargs={"prompt": prompt},
             return_source_documents=True,
             verbose=True
     )
