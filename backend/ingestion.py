@@ -1,6 +1,7 @@
 import os
+import speech_recognition as sr
 from dotenv import load_dotenv
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader, TextLoader, CSVLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
@@ -17,7 +18,6 @@ def create_pinecone_index(user):
     
     try:
         existing_indexes = pc.list_indexes().names()
-
         if index_name not in existing_indexes:
             pc.create_index(
                 name=index_name,
@@ -31,10 +31,31 @@ def create_pinecone_index(user):
 def load_document(file_path):
     """Load a document from file."""
     try:
-        loader = PyPDFLoader(file_path)
+        if file_path.endswith(".pdf"):
+            loader = PyPDFLoader(file_path)
+        elif file_path.endswith(".txt"):
+            loader = TextLoader(file_path)
+        elif file_path.endswith(".csv"):
+            loader = CSVLoader(file_path)
+        elif file_path.endswith((".mp3", ".wav")):
+            return transcribe_audio(file_path)
+        else:
+            raise ValueError("Unsupported file format")
         return loader.load()
     except Exception as e:
         print(f"Error loading document: {e}")
+        return []
+
+def transcribe_audio(file_path):
+    """Transcribe audio file into text using SpeechRecognition."""
+    try:
+        recognizer = sr.Recognizer()
+        with sr.AudioFile(file_path) as source:
+            audio = recognizer.record(source)
+        text = recognizer.recognize_google(audio)
+        return [text]
+    except Exception as e:
+        print(f"Error transcribing audio: {e}")
         return []
 
 def split_text(document, chunk_size=1000, chunk_overlap=100):
@@ -60,7 +81,6 @@ def create_embeddings():
 def store_embeddings(texts, embeddings, user, collection):
     """Store embeddings in the user's Pinecone index under the specified collection."""
     index_name = f"{user}-index"
-
     try:
         vector_store = PineconeVectorStore.from_documents(texts, embeddings, index_name=index_name, namespace=collection)
         print(f"Stored {len(texts)} embeddings in Pinecone index '{index_name}' under namespace '{collection}'")
@@ -96,6 +116,5 @@ def ingest_file(file_path, user, collection):
         os.remove(file_path)
 
         return True, "File processed and stored successfully"
-    
     except Exception as e:
         return False, f"Error processing file: {e}"

@@ -1,5 +1,7 @@
 # Ignore environment variables
-.env
+backend/.env
 
 # Ignore virtual environment
-venv/
+backend/venv/
+
+.vscode/
