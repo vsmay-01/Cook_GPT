@@ -5,6 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader, TextLoader, CSVLoa
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
+from langchain.schema import Document
 from pinecone import Pinecone, ServerlessSpec
 
 load_dotenv()
@@ -53,7 +54,7 @@ def transcribe_audio(file_path):
         with sr.AudioFile(file_path) as source:
             audio = recognizer.record(source)
         text = recognizer.recognize_google(audio)
-        return [text]
+        return [Document(page_content=text)]
     except Exception as e:
         print(f"Error transcribing audio: {e}")
         return []
