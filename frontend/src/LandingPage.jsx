@@ -7,6 +7,12 @@ import Workflow from "./components/Workflow";
 import Footer from "./components/Footer";
 import Pricing from "./components/Pricing";
 
+// Scroll Reveal Animation Variant
+const revealVariant = {
+  hidden: { opacity: 0, y: 50 },  // Start faded & moved down
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
 const LandingPage = () => {
   return (
     <div className="relative">
@@ -25,19 +31,48 @@ const LandingPage = () => {
 
       <Navbar />
       <div className="max-w-7xl mx-auto pt-20 px-6 relative z-10">
-        <motion.div>
+        <motion.div 
+          variants={revealVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <HeroSection />
         </motion.div>
-        <motion.div>
+
+        <motion.div 
+          variants={revealVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <FeatureSection />
         </motion.div>
-        <motion.div>
+
+        <motion.div 
+          variants={revealVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <Workflow />
         </motion.div>
-        <motion.div>
+
+        <motion.div 
+          variants={revealVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <Pricing />
         </motion.div>
-        <motion.div>
+
+        <motion.div 
+          variants={revealVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <Footer />
         </motion.div>
       </div>
