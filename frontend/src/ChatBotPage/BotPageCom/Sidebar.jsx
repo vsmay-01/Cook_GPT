@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { useUser } from '@clerk/clerk-react';
 import { SelectedCollectionContext } from "../../context/SelectedContext"; // Ensure this path is correct
-
+import Loader from "./Loader";
 export default function Sidebar() {
   const context = useContext(SelectedCollectionContext);
   if (!context) {
@@ -15,6 +15,14 @@ export default function Sidebar() {
   const [loading, setLoading] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const { isSignedIn, user, isLoaded } = useUser();
+  const [contentLoading,setcontentLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (collectionName.length === 0) {
+      setcontentLoading(true);
+    }
+  }, [collectionName]);
 
   const userCollection = async () => {
     try {
@@ -26,8 +34,10 @@ export default function Sidebar() {
       console.log(response.data);
       console.log(response.data.namespaces);
       setCollectionName(response.data.namespaces);
+      setcontentLoading(false); // Stop loading once data is fetched
     } catch (e) {
       console.log("error", e);
+      setcontentLoading(false); // Stop loading even if there's an error
     }
   };
 
@@ -88,7 +98,7 @@ export default function Sidebar() {
         Collections
       </h2>
       <div className="flex flex-col gap-3 mt-5">
-        {collectionName.map((collection, index) => (
+        {contentLoading?<Loader/>:collectionName.map((collection, index) => (
           <div
             key={index}
             className={`text-white p-2 rounded-lg cursor-pointer ${
