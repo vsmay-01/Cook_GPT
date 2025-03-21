@@ -3,12 +3,15 @@ import os
 from dotenv import load_dotenv
 from chatbot import *  # Import chatbot functions
 from ingestion import *  # Import ingestion functions
+from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 load_dotenv()
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
+    print("hiii")
     user = request.form.get("user")
     collection = request.form.get("collection")
     if not user:

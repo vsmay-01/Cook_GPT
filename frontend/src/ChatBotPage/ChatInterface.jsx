@@ -1,6 +1,7 @@
 import React from 'react'
 import Sidebar from './BotPageCom/Sidebar'
 import ChatInput from './BotPageCom/ChatInput'
+import ProfileSec from './BotPageCom/ProfileSec'
 
 const ChatInterface = () => {
   return (
@@ -11,8 +12,8 @@ const ChatInterface = () => {
         <div className='col-span-8 flex items-center justify-center'>
           <ChatInput/>
         </div>
-        <div className='col-span-2 flex items-center justify-center bg-white text-black'>
-            profile page
+        <div className='relative col-span-2 bg-white text-black'>
+           <ProfileSec className='absolute top-4 right-4' />
         </div>
     </div>
   )

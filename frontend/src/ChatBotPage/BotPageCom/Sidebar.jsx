@@ -8,10 +8,9 @@ const assistants = [
 
 export default function Sidebar() {
   const [selected, setSelected] = useState(null);
-  
 
   return (
-    <div className="w-64 h-screen bg-gray-100 p-4 border-r flex flex-col">
+    <div className="w-full h-screen bg-gray-100 p-4 border-b flex flex-col">
       <button className="w-full bg-black text-white py-2 rounded-lg mb-4">
         + Add new Assistant
       </button>

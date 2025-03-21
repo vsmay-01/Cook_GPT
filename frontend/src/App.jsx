@@ -6,20 +6,22 @@ import {
   UserButton,
 } from "@clerk/clerk-react";
 import LandingPage from "./LandingPage";
+import ChatInterface from "./ChatBotPage/ChatInterface";
 
 const App = () => {
   return (
     <>
-      <header>
+      {/* <header>
         <SignedOut>
           <SignInButton />
         </SignedOut>
         <SignedIn>
           <UserButton />
         </SignedIn>
-      </header>
+      </header> */}
       <div>
-        <LandingPage />
+        {/* <LandingPage /> */}
+        <ChatInterface/>
       </div>
     </>
   );
