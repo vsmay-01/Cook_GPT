@@ -1,33 +1,18 @@
-import React from 'react';
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
-import { useUser } from '@clerk/clerk-react';
+import React from "react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { FaUserCircle } from "react-icons/fa";
 
 const ProfileSec = () => {
-  const { isSignedIn, user, isLoaded } = useUser();
-
   return (
-    <div className=''>
-      <div className='mt-2 pl-3'>
-        <header>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </header>
-      </div>
-      {/* Display the user's first name */}
-      {isSignedIn && user && (
-        <div className="text-lg font-bold mt-4">
-          Hello, {user.firstName}!
-        </div>
-      )}
+    <div className="absolute top-4 right-4 z-50">
+      <SignedOut>
+        <SignInButton>
+          <FaUserCircle size={32} className="text-gray-300 hover:text-white transition-all cursor-pointer" />
+        </SignInButton>
+      </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
     </div>
   );
 };

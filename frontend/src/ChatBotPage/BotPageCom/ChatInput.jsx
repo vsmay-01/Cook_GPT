@@ -1,37 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useUser } from '@clerk/clerk-react';
-import { useContext , useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { SelectedCollectionContext } from "../../context/SelectedContext";
-import EmptyPage from "./EmptyPage";
 
 export default function Dashboard() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [response, setResponse] = useState(null);
-  const [collectionName, setCollectionName] = useState("");
   const [msg, setMsg] = useState([]);
-   const { selected, setSelected } = useContext(SelectedCollectionContext);
-
+  const { selected, setSelected } = useContext(SelectedCollectionContext);
   const { isSignedIn, user, isLoaded } = useUser();
-
+  
   useEffect(() => {
     if (selected !== undefined) {
-      setCollectionName(selected);
+      setSelected(selected);
     }
   }, [selected]);
-  user && console.log(user.username);
-  console.log(selected)
-
 
   const handleQuery = async () => {
-    console.log('collection:', collectionName);
     if (!userInput.trim()) {
       setMessage("Please enter a query");
       return;
     }
-
     if (!selected) {
       alert("Please select a collection first.");
       return;
@@ -39,75 +30,69 @@ export default function Dashboard() {
 
     setLoading(true);
     setMessage("Querying...");
-    setMsg((prev) => [...prev, { text: userInput, sender: "user" }]); // Add user input to the message list
+    setMsg((prev) => [...prev, { text: userInput, sender: "user" }]);
 
     try {
       const response = await axios.post(
         "http://127.0.0.1:5000/query",
         {
-          user: "princekumar04", // Match exactly what's in your Postman example
-          collection: collectionName || "abcd", // Use the collection name from input or fallback to "abcd"
+          user: user?.username || "princekumar04",
+          collection: selected || "default_collection",
           query: userInput,
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
 
-      console.log("Query response:", response.data);
       setResponse(response.data.response);
-      setMsg((prev) => [...prev, { text: response.data.response, sender: "bot" }]); // Add bot response to the message list
+      setMsg((prev) => [...prev, { text: response.data.response, sender: "bot" }]);
       setMessage("Query completed successfully!");
     } catch (error) {
-      console.error("Query error:", error);
       setMessage(`Query failed: ${error.response?.data?.error || error.message}`);
     } finally {
       setLoading(false);
-      setUserInput(""); // Clear the input field after query
+      setUserInput("");
     }
   };
-   
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex h-screen w-full bg-[#1e1e1e] text-gray-200 p-6">
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col p-6">
-        <div className="space-y-3">
-          {message && (
-            <div className="bg-gray-100 p-3 rounded-lg">{message}</div>
+      <div className="flex-1 flex flex-col p-6 max-w-3xl mx-auto">
+        {/* Chat History */}
+        <div className="space-y-3 overflow-y-auto flex-1 bg-[#2d2d2d] p-4 rounded-lg shadow-md">
+          {msg.length === 0 && (
+            <div className="text-gray-400 text-center py-10">Ask about your document...</div>
           )}
-          <div className="space-y-2">
-            {msg.map((m, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-lg ${
-                  m.sender === "user"
-                    ? "bg-green-100 self-end text-right"
-                    : "bg-blue-100 self-start text-left"
-                }`}
-              >
-                {m.text}
-              </div>
-            ))}
-          </div>
+          {msg.map((m, index) => (
+            <div
+              key={index}
+              className={`p-3 rounded-lg w-fit max-w-[80%] ${
+                m.sender === "user"
+                  ? "bg-[#ff8c42] text-white self-end ml-auto"
+                  : "bg-[#333] text-gray-100 self-start"
+              }`}
+            >
+              {m.text}
+            </div>
+          ))}
         </div>
 
-        {/* Query input */}
-        <div className="mt-auto border-t pt-4 flex items-center w-full">
+        {/* Query Input */}
+        <div className="mt-4 flex items-center w-full border-t border-gray-700 pt-3">
           <input
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Ask about your document..."
-            className="flex-1 p-2 border rounded-lg"
+            placeholder="Ask something..."
+            className="flex-1 p-3 bg-[#2d2d2d] border border-gray-600 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:border-[#ff8c42]"
           />
           <button
             onClick={handleQuery}
             disabled={loading}
-            className={`ml-2 bg-black text-white p-2 rounded-lg ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
+            className={`ml-2 bg-[#ff8c42] text-white p-3 rounded-lg transition-all ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#ff7b30]"
             }`}
           >
             ➤
