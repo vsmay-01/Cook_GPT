@@ -3,7 +3,8 @@ backend/.env
 
 # Ignore virtual environment
 backend/.venv/
-
+backend/venv/
+backend/extracted_images/
 .vscode/
 
 # Byte-compiled / optimized / DLL files
