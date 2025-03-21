@@ -2,6 +2,12 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "../assets/logo1.png";
 import { navItems } from "../constants";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 
 const Navbar = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -16,7 +22,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center flex-shrink-0">
             <img className="h-10 w-10 mr-2 rounded-full" src={logo} alt="Logo" />
-            <span className="text-xl text-white tracking-tight">CookAI</span>
+            <span className="text-xl text-white tracking-tight">CookGPT</span>
           </div>
 
           <ul className="hidden lg:flex ml-14 space-x-12">
@@ -37,7 +43,14 @@ const Navbar = () => {
               href="#"
               className="py-2 px-4 border border-neutral-700 rounded-lg text-neutral-300 hover:bg-neutral-800 transition-colors"
             >
-              Sign In
+               <header>
+                     <SignedOut>
+                       <SignInButton />
+                     </SignedOut>
+                     <SignedIn>
+                       <UserButton />
+                     </SignedIn>
+                   </header>
             </a>
             <a
               href="#"
