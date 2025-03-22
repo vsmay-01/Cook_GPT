@@ -13,9 +13,9 @@ export default function Dashboard() {
   const [response, setResponse] = useState(null);
   const [msg, setMsg] = useState([]);
   const { selected } = useContext(SelectedCollectionContext);
-  const { rerankedDocuments ,setRerankedDocuments } = useContext(ChatResContext);
+  const { rerankedDocuments, setRerankedDocuments } = useContext(ChatResContext);
   const { user } = useUser();
-  
+
   // Reference to the chat container for auto-scrolling
   const chatContainerRef = useRef(null);
 
@@ -45,11 +45,11 @@ export default function Dashboard() {
     setUserInput(""); // Clear input field immediately when query is sent
     setLoading(true);
     setMessage("Querying...");
-    
+
     // Add user message immediately
     const userMessage = { text: currentUserInput, sender: "user" };
     setMsg((prev) => [...prev, userMessage]);
-    
+
     // Add a temporary loading message (this will be replaced when response comes)
     const loadingMessageId = Date.now(); // Use timestamp as temp ID
     setMsg((prev) => [...prev, { id: loadingMessageId, loading: true, sender: "bot" }]);
@@ -66,30 +66,29 @@ export default function Dashboard() {
           headers: { "Content-Type": "application/json" },
         }
       );
-    // console.log(response.data.reranked_documents[0].content)
-    setRerankedDocuments(response.data.reranked_documents[0].content);
+      setRerankedDocuments(response.data.reranked_documents[0].content);
       setResponse(response.data.llm_response);
-      
+
       // Replace the loading message with the actual response
-      setMsg((prev) => 
-        prev.map(item => 
-          item.id === loadingMessageId 
-            ? { text:response.data.llm_response, sender: "bot" } 
+      setMsg((prev) =>
+        prev.map((item) =>
+          item.id === loadingMessageId
+            ? { text: response.data.llm_response, sender: "bot" }
             : item
         )
       );
-      
+
       setMessage("Query completed successfully!");
     } catch (error) {
       // Replace the loading message with an error message
-      setMsg((prev) => 
-        prev.map(item => 
-          item.id === loadingMessageId 
-            ? { text: `Error: ${error.response?.data?.error || error.message}`, sender: "bot", isError: true } 
+      setMsg((prev) =>
+        prev.map((item) =>
+          item.id === loadingMessageId
+            ? { text: `Error: ${error.response?.data?.error || error.message}`, sender: "bot", isError: true }
             : item
         )
       );
-      
+
       setMessage(`Query failed: ${error.response?.data?.error || error.message}`);
     } finally {
       setLoading(false);
@@ -97,18 +96,18 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col  h-[80vh] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg border border-gray-800">
+    <div className="flex flex-col h-[80vh] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg border border-gray-800">
       {/* Chat Header */}
-      <div className="bg-[#242424] px-6 py-3 border-b border-gray-800">
+      <div className="bg-[#242424] px-6 py-3 border-b border-gray-800 rounded-t-xl">
         <h2 className="text-gray-200 font-medium">
           {selected ? `Collection: ${selected}` : "Select a collection to begin"}
         </h2>
       </div>
 
       {/* Chat History */}
-      <div 
-        ref={chatContainerRef} 
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+      <div
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[#ff8c42] scrollbar-track-[#333]"
       >
         {msg.length === 0 ? (
           <div className="h-full flex items-center justify-center">
@@ -124,9 +123,9 @@ export default function Dashboard() {
                 className={`p-3 rounded-lg max-w-[75%] ${
                   m.sender === "user"
                     ? "bg-[#ff8c42] text-white rounded-tr-none"
-                    : m.isError 
-                      ? "bg-[#933] text-gray-100 rounded-tl-none" 
-                      : "bg-[#333] text-gray-100 rounded-tl-none"
+                    : m.isError
+                    ? "bg-[#933] text-gray-100 rounded-tl-none"
+                    : "bg-[#333] text-gray-100 rounded-tl-none"
                 }`}
               >
                 {m.loading ? (
@@ -143,7 +142,7 @@ export default function Dashboard() {
       </div>
 
       {/* Query Input */}
-      <div className="p-4 bg-[#242424] border-t border-gray-800">
+      <div className="p-4 bg-[#242424] border-t border-gray-800 rounded-b-xl">
         <div className="flex items-center bg-[#2d2d2d] rounded-lg overflow-hidden border border-gray-700 focus-within:border-[#ff8c42] transition-colors">
           <input
             type="text"
@@ -163,11 +162,15 @@ export default function Dashboard() {
             }`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                clipRule="evenodd"
+              />
             </svg>
           </button>
         </div>
-        
+
         {/* Collection indicator */}
         <div className="mt-2 text-xs text-gray-500 flex justify-between">
           <span>{selected ? `Querying: ${selected}` : "Please select a collection"}</span>
