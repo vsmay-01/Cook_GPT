@@ -305,39 +305,7 @@ Ensure the following are installed on your system:
 
 By following these steps, you will have the backend of Cook GPT up and running, ready to handle requests and power the AI-driven cooking assistant.
 
----
 
-## 📊 Performance Metrics
-
-<div align="center">
-  <table>
-    <tr>
-      <th>Metric</th>
-      <th>Value</th>
-      <th>Industry Average</th>
-    </tr>
-    <tr>
-      <td>Recipe Suggestion Accuracy</td>
-      <td>94.7%</td>
-      <td>78.3%</td>
-    </tr>
-    <tr>
-      <td>Image Recognition Speed</td>
-      <td>1.2 seconds</td>
-      <td>3.5 seconds</td>
-    </tr>
-    <tr>
-      <td>User Satisfaction Score</td>
-      <td>4.8/5.0</td>
-      <td>3.9/5.0</td>
-    </tr>
-    <tr>
-      <td>Average Meal Planning Time</td>
-      <td>3 minutes</td>
-      <td>27 minutes</td>
-    </tr>
-  </table>
-</div>
 
 ---
 
