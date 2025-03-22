@@ -11,6 +11,7 @@ from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
 import io
+import uuid
 
 load_dotenv()
 
@@ -106,10 +107,17 @@ def create_embeddings():
         print(f"Error creating embeddings: {e}")
         return None
 
-def store_embeddings(texts, embeddings, user, collection):
-    """Store embeddings in Pinecone."""
+def store_embeddings(texts, embeddings, user, collection, file_path):
+    """Store embeddings in Pinecone with filename and unique ID in metadata."""
     index_name = f"{user}-index"
     try:
+        # Add filename and unique ID to metadata for each document
+        for doc in texts:
+            if not hasattr(doc, 'metadata'):
+                doc.metadata = {}
+            doc.metadata['filename'] = os.path.basename(file_path)
+            doc.metadata['vector_id'] = str(uuid.uuid4())  # Unique ID for each vector
+            
         vector_store = PineconeVectorStore.from_documents(
             texts, 
             embeddings, 
@@ -117,9 +125,11 @@ def store_embeddings(texts, embeddings, user, collection):
             namespace=collection
         )
         print(f"Stored {len(texts)} embeddings in Pinecone index '{index_name}' under namespace '{collection}'")
+        return [doc.metadata['vector_id'] for doc in texts]  # Return list of vector IDs
     except Exception as e:
         print(f"Error storing embeddings: {e}")
-
+        return []
+    
 def ingest_file(file_path, user, collection):
     """Process and store a file's data in Pinecone."""
     try:
@@ -141,17 +151,25 @@ def ingest_file(file_path, user, collection):
         if embeddings is None:
             return False, "Failed to create embeddings"
 
-        # Store text embeddings in Pinecone
-        store_embeddings(texts, embeddings, user, collection)
+        # Store text embeddings in Pinecone with filename and IDs
+        vector_ids = store_embeddings(texts, embeddings, user, collection, file_path)
         
         # Process images if present
         for image_path in image_paths:
             extracted_text = extract_text_from_image(image_path)
-            image_doc = Document(page_content=extracted_text, metadata={"type": "image", "file": image_path})
-            store_embeddings([image_doc], embeddings, user, collection)
+            image_doc = Document(
+                page_content=extracted_text, 
+                metadata={
+                    "type": "image", 
+                    "filename": os.path.basename(image_path),
+                    "vector_id": str(uuid.uuid4())
+                }
+            )
+            image_vector_ids = store_embeddings([image_doc], embeddings, user, collection, image_path)
+            vector_ids.extend(image_vector_ids)
             print(f"Stored OCR-extracted text from {image_path}")
 
         os.remove(file_path)
-        return True, "File processed and stored successfully"
+        return True, f"File processed and stored successfully with vector IDs: {vector_ids}"
     except Exception as e:
         return False, f"Error processing file: {e}"

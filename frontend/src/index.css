@@ -8,3 +8,13 @@
   font-family: "Poppins", sans-serif;
   color-scheme: dark;
 }
+
+/* Add this to your global CSS file if not using Tailwind */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}

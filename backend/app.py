@@ -1,10 +1,15 @@
 from flask import Flask, request, jsonify
 import os
 from dotenv import load_dotenv
-from chatbot import *  # Import chatbot functions
-from ingestion import *  # Import ingestion functions
-from pinecone_utils import *  # Import Pinecone functions
-from flask_cors import CORS  # Import CORS
+from chatbot import * 
+from ingestion import * 
+from pinecone_utils import *  
+from flask_cors import CORS  
+import logging
+
+# Set up logging globally
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)  # Create logger
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -12,7 +17,6 @@ load_dotenv()
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
-    print("hiii")
     user = request.form.get("user")
     collection = request.form.get("collection")
     if not user:
@@ -54,12 +58,12 @@ def query():
         return jsonify({"error": "Query text is required"}), 400
     
     try:
-        print(f"Querying Pinecone with user: {user}, collection: {collection}, query: {query_text}")
+        logger.debug(f"Querying Pinecone with user: {user}, collection: {collection}, query: {query_text}")
         response = query_pinecone(query_text, f'{user}-index', collection)
-        print(f"Query response: {response}")
-        return jsonify({"response": response})
+        logger.debug(f"Query response: {response}")
+        return jsonify(response)  # Return detailed response
     except Exception as e:
-        print(f"Error querying Pinecone: {e}")
+        logger.error(f"Error querying Pinecone: {e}")
         return jsonify({"error": str(e)}), 500
     
 @app.route("/index-info", methods=["GET"])
@@ -74,8 +78,33 @@ def get_index_info():
         return jsonify(index_info)
     except Exception as e:
         print(f"Error fetching index info: {e}")
-        return jsonify({"error": str(e)}), 500    
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/delete", methods=["POST"])
+def delete_file():
+    """Delete vectors associated with a specific file in a namespace for a user."""
+    data = request.get_json()
+    user = data.get("user")
+    namespace = data.get("collection")
+    filename = data.get("filename")
+    
+    if not user:
+        return jsonify({"error": "User identifier is required"}), 400
+    if not namespace:
+        return jsonify({"error": "Namespace identifier is required"}), 400
+    if not filename:
+        return jsonify({"error": "Filename is required"}), 400
+    
+    try:
+        success, message = delete_file_vectors(user, namespace, filename)
+        if not success:
+            return jsonify({"error": message}), 404
+        return jsonify({"message": message})
+    except Exception as e:
+        print(f"Error deleting file: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     os.makedirs("uploads", exist_ok=True)
-    app.run(debug=True)
+    app.run(debug=True)    
