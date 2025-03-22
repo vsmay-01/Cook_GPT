@@ -3,8 +3,8 @@ import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
 import { SelectedCollectionContext } from "../../context/SelectedContext";
 import { ChatResContext } from "../../context/ChatResContext";
-import ChatLoader from './ChatLoader';
-import EmptyPage from './EmptyPage';
+import ChatLoader from "./ChatLoader";
+import EmptyPage from "./EmptyPage";
 
 export default function Dashboard() {
   const [message, setMessage] = useState("");
@@ -13,16 +13,18 @@ export default function Dashboard() {
   const [response, setResponse] = useState(null);
   const [msg, setMsg] = useState([]);
   const { selected } = useContext(SelectedCollectionContext);
-  const { rerankedDocuments ,setRerankedDocuments } = useContext(ChatResContext);
+  const { rerankedDocuments, setRerankedDocuments } =
+    useContext(ChatResContext);
   const { user } = useUser();
-  
+
   // Reference to the chat container for auto-scrolling
   const chatContainerRef = useRef(null);
 
   // Function to scroll to the bottom of the chat
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   };
 
@@ -45,14 +47,17 @@ export default function Dashboard() {
     setUserInput(""); // Clear input field immediately when query is sent
     setLoading(true);
     setMessage("Querying...");
-    
+
     // Add user message immediately
     const userMessage = { text: currentUserInput, sender: "user" };
     setMsg((prev) => [...prev, userMessage]);
-    
+
     // Add a temporary loading message (this will be replaced when response comes)
     const loadingMessageId = Date.now(); // Use timestamp as temp ID
-    setMsg((prev) => [...prev, { id: loadingMessageId, loading: true, sender: "bot" }]);
+    setMsg((prev) => [
+      ...prev,
+      { id: loadingMessageId, loading: true, sender: "bot" },
+    ]);
 
     try {
       const response = await axios.post(
@@ -66,31 +71,37 @@ export default function Dashboard() {
           headers: { "Content-Type": "application/json" },
         }
       );
-    // console.log(response.data.reranked_documents[0].content)
-    setRerankedDocuments(response.data.reranked_documents[0].content);
+      // console.log(response.data.reranked_documents[0].content)
+      setRerankedDocuments(response.data.reranked_documents[0].content);
       setResponse(response.data.llm_response);
-      
+
       // Replace the loading message with the actual response
-      setMsg((prev) => 
-        prev.map(item => 
-          item.id === loadingMessageId 
-            ? { text:response.data.llm_response, sender: "bot" } 
+      setMsg((prev) =>
+        prev.map((item) =>
+          item.id === loadingMessageId
+            ? { text: response.data.llm_response, sender: "bot" }
             : item
         )
       );
-      
+
       setMessage("Query completed successfully!");
     } catch (error) {
       // Replace the loading message with an error message
-      setMsg((prev) => 
-        prev.map(item => 
-          item.id === loadingMessageId 
-            ? { text: `Error: ${error.response?.data?.error || error.message}`, sender: "bot", isError: true } 
+      setMsg((prev) =>
+        prev.map((item) =>
+          item.id === loadingMessageId
+            ? {
+                text: `Error: ${error.response?.data?.error || error.message}`,
+                sender: "bot",
+                isError: true,
+              }
             : item
         )
       );
-      
-      setMessage(`Query failed: ${error.response?.data?.error || error.message}`);
+
+      setMessage(
+        `Query failed: ${error.response?.data?.error || error.message}`
+      );
     } finally {
       setLoading(false);
     }
@@ -101,13 +112,15 @@ export default function Dashboard() {
       {/* Chat Header */}
       <div className="bg-[#242424] px-6 py-3 border-b border-gray-800">
         <h2 className="text-gray-200 font-medium">
-          {selected ? `Collection: ${selected}` : "Select a collection to begin"}
+          {selected
+            ? `Collection: ${selected}`
+            : "Select a collection to begin"}
         </h2>
       </div>
 
       {/* Chat History */}
-      <div 
-        ref={chatContainerRef} 
+      <div
+        ref={chatContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4"
       >
         {msg.length === 0 ? (
@@ -118,15 +131,17 @@ export default function Dashboard() {
           msg.map((m, index) => (
             <div
               key={index}
-              className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex ${
+                m.sender === "user" ? "justify-end" : "justify-start"
+              }`}
             >
               <div
                 className={`p-3 rounded-lg max-w-[75%] ${
                   m.sender === "user"
                     ? "bg-[#ff8c42] text-white rounded-tr-none"
-                    : m.isError 
-                      ? "bg-[#933] text-gray-100 rounded-tl-none" 
-                      : "bg-[#333] text-gray-100 rounded-tl-none"
+                    : m.isError
+                    ? "bg-[#933] text-gray-100 rounded-tl-none"
+                    : "bg-[#333] text-gray-100 rounded-tl-none"
                 }`}
               >
                 {m.loading ? (
@@ -151,7 +166,7 @@ export default function Dashboard() {
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Ask something about your document..."
             className="flex-1 p-3 bg-transparent text-gray-200 placeholder-gray-500 focus:outline-none"
-            onKeyPress={(e) => e.key === 'Enter' && !loading && handleQuery()}
+            onKeyPress={(e) => e.key === "Enter" && !loading && handleQuery()}
           />
           <button
             onClick={handleQuery}
@@ -160,15 +175,26 @@ export default function Dashboard() {
               loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#ff7b30]"
             }`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                clipRule="evenodd"
+              />
             </svg>
           </button>
         </div>
-        
+
         {/* Collection indicator */}
         <div className="mt-2 text-xs text-gray-500 flex justify-between">
-          <span>{selected ? `Querying: ${selected}` : "Please select a collection"}</span>
+          <span>
+            {selected ? `Querying: ${selected}` : "Please select a collection"}
+          </span>
           {message && <span>{message}</span>}
         </div>
       </div>
