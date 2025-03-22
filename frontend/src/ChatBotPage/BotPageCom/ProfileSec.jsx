@@ -4,7 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 
 const ProfileSec = () => {
   return (
-    <div className="absolute top-4 right-4 z-50">
+    <div className="absolute top-4 right-4 z-50 bg-white">
       <SignedOut>
         <SignInButton>
           <FaUserCircle size={32} className="text-gray-300 hover:text-white transition-all cursor-pointer" />
@@ -13,6 +13,7 @@ const ProfileSec = () => {
       <SignedIn>
         <UserButton />
       </SignedIn>
+      div
     </div>
   );
 };
