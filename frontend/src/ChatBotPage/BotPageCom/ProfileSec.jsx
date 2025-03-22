@@ -4,6 +4,7 @@ import {
   SignedOut,
   SignInButton,
   UserButton,
+  useUser,
 } from "@clerk/clerk-react";
 import { FaUserCircle } from "react-icons/fa";
 import { ChatResContext } from "../../context/ChatResContext";
