@@ -11,15 +11,13 @@ const ProfileSec = () => {
   }, []);
 
   return (
-    <div className="absolute w-60 top-4 right-4 z-50 p-4 rounded-lg shadow-md flex flex-col gap-8 ">
-      <div>
-    <div className="absolute w-60 top-4 right-4 z-50 p-4 rounded-lg shadow-md">
+    <div className="absolute top-6 right-6 z-50 bg-[#1c1c1c] bg-opacity-90 backdrop-blur-lg p-4 rounded-lg shadow-lg border-2 border-gray-600">
       <SignedOut>
         <SignInButton>
           <FaUserCircle size={32} className="text-gray-300 hover:text-white transition-all cursor-pointer" />
         </SignInButton>
       </SignedOut>
-      </div>
+      <div>
       <UserButton />
         </div>
       <SignedIn>
@@ -39,7 +37,6 @@ const ProfileSec = () => {
         </div>
       </SignedIn>
     </div>
-
   );
 };
 

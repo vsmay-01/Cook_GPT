@@ -22,8 +22,8 @@ const ChatInterface = () => {
           {/* Main Content Area */}
           <div className="flex-1 flex flex-row items-start justify-start h-full max-w-full overflow-y-auto ml-[280px]">
             <div className="w-full max-w-3xl bg-[#1c1c1c] bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-700 mt-2 p-5 mb-3 ml-7">
-              <h1 className="text-white text-3xl font-semibold text-center mb-8">
-                Add title here if needed
+              <h1 className="text-4xl font-extrabold text-blue-600 text-center mb-8 tracking-wide">
+                Manage Your Collections and Upload Documents
               </h1>
 
               {/* ChatInput Section */}
