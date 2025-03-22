@@ -5,7 +5,7 @@ import { SelectedCollectionContext } from "../../context/SelectedContext";
 import { ChatResContext } from "../../context/ChatResContext";
 import ChatLoader from "./ChatLoader";
 import EmptyPage from "./EmptyPage";
-
+const API_URL = "https://cook-backend-8gfj.onrender.com";
 export default function Dashboard() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,14 +13,16 @@ export default function Dashboard() {
   const [response, setResponse] = useState(null);
   const [msg, setMsg] = useState([]);
   const { selected } = useContext(SelectedCollectionContext);
-  const { rerankedDocuments, setRerankedDocuments } = useContext(ChatResContext);
+  const { rerankedDocuments, setRerankedDocuments } =
+    useContext(ChatResContext);
   const { user } = useUser();
 
   const chatContainerRef = useRef(null);
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   };
 
@@ -54,7 +56,7 @@ export default function Dashboard() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/query",
+        `${API_URL}/query`,
         {
           user: user?.username || "princekumar04",
           collection: selected || "default_collection",
@@ -85,7 +87,9 @@ export default function Dashboard() {
             : item
         )
       );
-      setMessage(`Query failed: ${error.response?.data?.error || error.message}`);
+      setMessage(
+        `Query failed: ${error.response?.data?.error || error.message}`
+      );
     } finally {
       setLoading(false);
     }
@@ -96,7 +100,9 @@ export default function Dashboard() {
       {/* Chat Header */}
       <div className="bg-transparent px-6 py-4 w-full rounded-t-2xl">
         <h2 className="text-[#a1c4fd] font-semibold tracking-wide text-lg">
-          {selected ? `Collection: ${selected}` : "Select a collection to begin"}
+          {selected
+            ? `Collection: ${selected}`
+            : "Select a collection to begin"}
         </h2>
       </div>
 
@@ -113,7 +119,9 @@ export default function Dashboard() {
           msg.map((m, index) => (
             <div
               key={index}
-              className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex ${
+                m.sender === "user" ? "justify-end" : "justify-start"
+              }`}
             >
               <div
                 className={`p-4 rounded-xl max-w-[70%] transition-all duration-300 ${
@@ -122,7 +130,6 @@ export default function Dashboard() {
                     : m.isError
                     ? "bg-[#2a1a3b] text-[#c38cff] shadow-lg shadow-[#c38cff]/20 rounded-tl-none"
                     : "bg-gradient-to-r from-[#1b2b34] to-[#3a506b] text-[#d6f7ff] shadow-lg shadow-[#5a9fd6]/20 rounded-tl-none"
-
                 }`}
               >
                 {m.loading ? (
