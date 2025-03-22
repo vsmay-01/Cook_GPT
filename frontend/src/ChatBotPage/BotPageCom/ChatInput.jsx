@@ -11,7 +11,7 @@ export default function Dashboard() {
   const [msg, setMsg] = useState([]);
   const { selected, setSelected } = useContext(SelectedCollectionContext);
   const { isSignedIn, user, isLoaded } = useUser();
-  
+
   useEffect(() => {
     if (selected !== undefined) {
       setSelected(selected);
@@ -63,16 +63,15 @@ export default function Dashboard() {
         {/* Chat History */}
         <div className="space-y-3 overflow-y-auto flex-1 bg-[#2d2d2d] p-4 rounded-lg shadow-md">
           {msg.length === 0 && (
-            <div className="text-gray-400 text-center py-10">Ask about your document...</div>
+            <div className="text-blue-500 text-center py-10">Ask about your document...</div> // Change color to blue theme
           )}
           {msg.map((m, index) => (
             <div
               key={index}
-              className={`p-3 rounded-lg w-fit max-w-[80%] ${
-                m.sender === "user"
+              className={`p-3 rounded-lg w-fit max-w-[80%] ${m.sender === "user"
                   ? "bg-[#ff8c42] text-white self-end ml-auto"
                   : "bg-[#333] text-gray-100 self-start"
-              }`}
+                }`}
             >
               {m.text}
             </div>
@@ -81,19 +80,22 @@ export default function Dashboard() {
 
         {/* Query Input */}
         <div className="mt-4 flex items-center w-full border-t border-gray-700 pt-3">
+          {/* Ensure the input field has a height and is visible */}
           <input
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Ask something..."
-            className="flex-1 p-3 bg-[#2d2d2d] border border-gray-600 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:border-[#ff8c42]"
+            className="flex-1 p-3 bg-[#2d2d2d] border border-gray-600 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            style={{ height: "40px", minWidth: "0" }}  // Set a fixed height for the input
           />
+
+          {/* Button aligned with the input */}
           <button
             onClick={handleQuery}
             disabled={loading}
-            className={`ml-2 bg-[#ff8c42] text-white p-3 rounded-lg transition-all ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#ff7b30]"
-            }`}
+            className={`ml-2 bg-[#1e3c72] text-white p-3 rounded-lg transition-all ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#153b63]"} ${userInput.trim() === "" ? "opacity-50 cursor-not-allowed" : ""}`}
+            style={{ height: "40px" }}  // Set the button height to match the input height
           >
             ➤
           </button>

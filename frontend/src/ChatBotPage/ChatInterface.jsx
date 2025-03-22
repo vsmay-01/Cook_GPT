@@ -11,24 +11,27 @@ const ChatInterface = () => {
   return (
     <SelectedCollectionProvider>
       <div className="relative flex h-screen bg-gradient-to-b from-[#1a1a1a] to-[#121212] overflow-hidden">
-        
+
         {/* Sidebar (Fixed Left) */}
-        <div className="w-[250px] h-full bg-[#181818] bg-opacity-80 backdrop-blur-md shadow-lg p-4 fixed left-0 top-0 z-10 rounded-r-2xl">
+        <div className="w-[250px] h-screen bg-[#181818] bg-opacity-80 backdrop-blur-md shadow-lg p-4 fixed left-0 top-0 z-10 rounded-r-2xl flex flex-col justify-between">
           <Sidebar />
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center pl-[260px]">
-          <div className="max-w-3xl w-full p-8 bg-[#1c1c1c] bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-700 mx-auto">
+        <div className="flex-1 flex flex-col items-center justify-between pl-[260px] pt-10 pb-6">
+          <div className="max-w-3xl w-full p-8 bg-[#1c1c1c] bg-opacity-90 backdrop-blur-lg rounded-2xl shadow-xl border border-[#2d2d2d] mx-auto overflow-hidden">
             <h1 className="text-white text-2xl font-semibold text-center mb-6">
               {isSignedIn && user ? `Hello, ${user.firstName}!` : "Ask about your document..."}
             </h1>
-            <ChatInput />
+            {/* ChatInput Section */}
+            <div className="flex flex-col h-full justify-between">
+              <ChatInput />
+            </div>
           </div>
         </div>
 
         {/* Profile Icon */}
-        <div className="absolute top-6 right-6">
+        <div className="absolute top-6 right-6 z-20">
           <ProfileSec />
         </div>
 
