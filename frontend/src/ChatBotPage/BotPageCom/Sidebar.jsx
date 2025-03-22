@@ -28,12 +28,6 @@ export default function Sidebar() {
     }
   }, [collectionName]);
 
-<<<<<<< HEAD
-  const deleteCollection = () => {
-    // Implementation for delete functionality
-  };
-
-=======
   const deleteCollection=(collection)=>{
     
 
@@ -68,7 +62,6 @@ export default function Sidebar() {
     });
   }
 
->>>>>>> 31e407a383d2c7c45168bc4afaf03b7f8f4c85f0
   const userCollection = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:5000/index-info", {
@@ -80,13 +73,7 @@ export default function Sidebar() {
       // Extract keys from the namespaces object
       const namespaces = response.data.namespaces ? Object.keys(response.data.namespaces) : [];
       console.log(response);
-<<<<<<< HEAD
-
-      setCollectionName(namespaces); // Set the keys as the collection names
-      setCollectionsData(response.data.namespaces || {}); // Store the full namespaces data
-=======
       setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
->>>>>>> 31e407a383d2c7c45168bc4afaf03b7f8f4c85f0
       setcontentLoading(false); // Stop loading once data is fetched
     } catch (e) {
       console.log("error", e);
@@ -175,9 +162,7 @@ export default function Sidebar() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-<<<<<<< HEAD
                     toggleDropdown(collection);
-=======
                     if (
                       window.confirm(
                         `Are you sure you want to delete "${collection}"?`
@@ -186,7 +171,6 @@ export default function Sidebar() {
                       deleteCollection(collection);
                       console.log(`Deleted collection: ${collection}`);
                     }
->>>>>>> 31e407a383d2c7c45168bc4afaf03b7f8f4c85f0
                   }}
                   className="ml-2 text-gray-400 hover:text-gray-200 transition-all duration-200"
                   title="Show Files"
