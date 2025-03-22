@@ -92,7 +92,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col w-full h-[80vh] bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-2xl border border-[#1e2a38] backdrop-blur-sm">
+    <div className="flex flex-col w-full h-[87vh] bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-2xl border border-[#1e2a38] backdrop-blur-sm">
       {/* Chat Header */}
       <div className="bg-gradient-to-r from-[#1e2a38] to-[#0f1a28] px-6 py-4 border-b border-[#2e3b4e] rounded-t-2xl">
         <h2 className="text-[#a1c4fd] font-semibold tracking-wide text-lg">
