@@ -9,7 +9,8 @@ import { FaUserCircle } from "react-icons/fa";
 import { ChatResContext } from "../../context/ChatResContext";
 
 const ProfileSec = () => {
-  const { rerankedDocuments } = useContext(ChatResContext);
+  const { rerankedDocuments } = useContext(ChatResContext); // Access ChatResContext
+  const { user } = useUser(); // Access user object
 
   useEffect(() => {
     console.log(rerankedDocuments);

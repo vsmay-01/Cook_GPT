@@ -4,7 +4,7 @@ import Sidebar from './BotPageCom/Sidebar';
 import ChatInput from './BotPageCom/ChatInput';
 import ProfileSec from './BotPageCom/ProfileSec';
 import { SelectedCollectionProvider } from "../context/SelectedContext";
-import { ChatResProvider } from "../context/ChatResContext"; // Use the correct provider
+import { ChatResProvider } from "../context/ChatResContext";
 
 const ChatInterface = () => {
   const { isSignedIn, user } = useUser();
@@ -66,7 +66,6 @@ const ChatInterface = () => {
               <ProfileSec />
             </div>
           </div>
-
         </div>
       </ChatResProvider>
     </SelectedCollectionProvider>
