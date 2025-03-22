@@ -41,7 +41,7 @@ const Navbar = () => {
           {/* Desktop Buttons */}
           <div className="hidden lg:flex justify-center space-x-6 items-center">
            
-               <header >
+          <header >
                 {/* //  <button className=> */}
                      <SignedOut>
                        <SignInButton />
@@ -78,9 +78,18 @@ const Navbar = () => {
               ))}
             </ul>
             <div className="flex space-x-6 mt-4">
-              <button className="relative overflow-hidden py-2 px-4 border border-neutral-700 rounded-lg text-neutral-300 hover:bg-neutral-800 transition-colors ripple">
-                Sign In
-              </button>
+              {/* <button className="relative overflow-hidden py-2 px-4 border border-neutral-700 rounded-lg text-neutral-300 hover:bg-neutral-800 transition-colors ripple"> */}
+              <header >
+                {/* //  <button className=> */}
+                     <SignedOut>
+                       <SignInButton />
+                     </SignedOut>
+                     <SignedIn>
+                       <UserButton />
+                     </SignedIn>
+                      {/* </button> */}
+                   </header>
+              {/* </button> */}
               <button className="relative overflow-hidden py-2 px-4 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:scale-105 transition-transform ripple">
                 Create an account
               </button>

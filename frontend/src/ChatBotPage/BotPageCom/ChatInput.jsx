@@ -92,9 +92,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col w-full h-[87vh] bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-2xl border border-[#1e2a38] backdrop-blur-sm">
+    <div className="flex flex-col w-full h-[90vh] bg-transparent rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm">
       {/* Chat Header */}
-      <div className="bg-gradient-to-r from-[#1e2a38] to-[#0f1a28] px-6 py-4 border-b border-[#2e3b4e] rounded-t-2xl">
+      <div className="bg-transparent px-6 py-4 w-full rounded-t-2xl">
         <h2 className="text-[#a1c4fd] font-semibold tracking-wide text-lg">
           {selected ? `Collection: ${selected}` : "Select a collection to begin"}
         </h2>
@@ -103,10 +103,10 @@ export default function Dashboard() {
       {/* Chat History */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-[#4e9fd1] scrollbar-track-transparent"
+        className="flex-1 overflow-y-auto w-full p-6 space-y-6"
       >
         {msg.length === 0 ? (
-          <div className="h-full flex items-center justify-center">
+          <div className="h-full flex w-full items-center justify-center">
             <EmptyPage />
           </div>
         ) : (
@@ -118,10 +118,11 @@ export default function Dashboard() {
               <div
                 className={`p-4 rounded-xl max-w-[70%] transition-all duration-300 ${
                   m.sender === "user"
-                    ? "bg-gradient-to-r from-[#ff6b6b] to-[#ff8c42] text-white shadow-lg shadow-[#ff6b6b]/30 rounded-tr-none"
+                    ? "bg-gradient-to-r from-[#4c8bf5] to-[#6dd5fa] text-white shadow-lg shadow-[#4c8bf5]/30 rounded-tr-none"
                     : m.isError
-                    ? "bg-[#3b1a1a] text-[#ff9999] shadow-lg shadow-[#ff9999]/20 rounded-tl-none"
-                    : "bg-gradient-to-r from-[#1e2a38] to-[#2e3b4e] text-[#d1e8ff] shadow-lg shadow-[#4e9fd1]/20 rounded-tl-none"
+                    ? "bg-[#2a1a3b] text-[#c38cff] shadow-lg shadow-[#c38cff]/20 rounded-tl-none"
+                    : "bg-gradient-to-r from-[#1b2b34] to-[#3a506b] text-[#d6f7ff] shadow-lg shadow-[#5a9fd6]/20 rounded-tl-none"
+
                 }`}
               >
                 {m.loading ? (
@@ -138,7 +139,7 @@ export default function Dashboard() {
       </div>
 
       {/* Query Input */}
-      <div className="p-4 bg-[#0f1a28] border-t border-[#2e3b4e] rounded-b-2xl">
+      <div className="p-4 bg-transparent border-[#2e3b4e] rounded-b-2xl">
         <div className="flex items-center bg-[#1e2a38]/80 rounded-xl overflow-hidden border border-[#4e9fd1]/30 focus-within:border-[#4e9fd1] focus-within:ring-2 focus-within:ring-[#4e9fd1]/50 transition-all duration-300 backdrop-blur-md">
           <input
             type="text"

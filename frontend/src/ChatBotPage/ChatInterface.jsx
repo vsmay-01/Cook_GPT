@@ -47,14 +47,14 @@ const ChatInterface = () => {
           )}
 
           {/* Main Content */}
-          <div className="lg:w-3/5 w-full flex flex-col items-center justify-start h-full max-w-full overflow-y-auto lg:ml-[20%] p-5">
-            <div className="w-full max-w-3xl bg-[#1c1c1c] bg-opacity-0 backdrop-blur-lg rounded-3xl shadow-xl  p-5">
+          <div className="lg:w-3/5 w-full flex flex-col items-center justify-start h-full max-w-full overflow-y-hidden lg:ml-[20%] p-5">
+            <div className="w-full max-w-3xl bg-transparent bg-opacity-0 backdrop-blur-lg rounded-3xl shadow-xl  p-5">
               {/* <h1 className="text-4xl font-sans-bold text-blue-600 text-center mb-8 tracking-wide">
                Hello, there!!
               </h1> */}
 
               {/* ChatInput Section */}
-              <div className="w-[100%] flex flex-col items-center justify-start space-y-4">
+              <div className="w-[100%] flex flex-col items-center justify-start space-y-4 ">
                 <ChatInput />
               </div>
             </div>
