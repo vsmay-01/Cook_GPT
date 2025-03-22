@@ -5,12 +5,15 @@ import { ChatResContext } from "../../context/ChatResContext"; // Import ChatRes
 
 const ProfileSec = () => {
   const { rerankedDocuments } = useContext(ChatResContext); // Access ChatResContext
- useEffect(()=>{
-  console.log(rerankedDocuments)
- },[])
+
+  useEffect(() => {
+    console.log(rerankedDocuments);
+  }, []);
+
   return (
     <div className="absolute w-60 top-4 right-4 z-50 p-4 rounded-lg shadow-md flex flex-col gap-8 ">
       <div>
+    <div className="absolute w-60 top-4 right-4 z-50 p-4 rounded-lg shadow-md">
       <SignedOut>
         <SignInButton>
           <FaUserCircle size={32} className="text-gray-300 hover:text-white transition-all cursor-pointer" />
@@ -18,6 +21,7 @@ const ProfileSec = () => {
       </SignedOut>
       </div>
       <UserButton />
+        </div>
       <SignedIn>
        
         {/* Display reranked documents */}
@@ -35,6 +39,7 @@ const ProfileSec = () => {
         </div>
       </SignedIn>
     </div>
+
   );
 };
 

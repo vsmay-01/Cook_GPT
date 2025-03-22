@@ -92,8 +92,8 @@ def delete_file():
         return jsonify({"error": "User identifier is required"}), 400
     if not namespace:
         return jsonify({"error": "Namespace identifier is required"}), 400
-    if not filename:
-        return jsonify({"error": "Filename is required"}), 400
+    # if not filename:
+        # return jsonify({"error": "Filename is required"}), 400
     
     try:
         success, message = delete_file_vectors(user, namespace, filename)
