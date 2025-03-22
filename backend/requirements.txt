@@ -11,3 +11,4 @@ flask_cors
 pypdf
 pdf2image
 pytesseract
+scikit-learn

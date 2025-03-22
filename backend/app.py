@@ -1,10 +1,15 @@
 from flask import Flask, request, jsonify
 import os
 from dotenv import load_dotenv
-from chatbot import *  # Import chatbot functions
-from ingestion import *  # Import ingestion functions
-from pinecone_utils import *  # Import Pinecone functions
-from flask_cors import CORS  # Import CORS
+from chatbot import * 
+from ingestion import * 
+from pinecone_utils import *  
+from flask_cors import CORS  
+import logging
+
+# Set up logging globally
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)  # Create logger
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -12,7 +17,6 @@ load_dotenv()
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
-    print("hiii")
     user = request.form.get("user")
     collection = request.form.get("collection")
     if not user:
@@ -54,12 +58,12 @@ def query():
         return jsonify({"error": "Query text is required"}), 400
     
     try:
-        print(f"Querying Pinecone with user: {user}, collection: {collection}, query: {query_text}")
+        logger.debug(f"Querying Pinecone with user: {user}, collection: {collection}, query: {query_text}")
         response = query_pinecone(query_text, f'{user}-index', collection)
-        print(f"Query response: {response}")
-        return jsonify({"response": response})
+        logger.debug(f"Query response: {response}")
+        return jsonify(response)  # Return detailed response
     except Exception as e:
-        print(f"Error querying Pinecone: {e}")
+        logger.error(f"Error querying Pinecone: {e}")
         return jsonify({"error": str(e)}), 500
     
 @app.route("/index-info", methods=["GET"])
