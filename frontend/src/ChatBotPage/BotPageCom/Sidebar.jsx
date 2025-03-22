@@ -24,6 +24,7 @@ export default function Sidebar() {
       setcontentLoading(true);
     }
   }, [collectionName]);
+  
 
   const deleteCollection=()=>{
 
@@ -38,6 +39,7 @@ export default function Sidebar() {
 
       // Extract keys from the namespaces object
       const namespaces = response.data.namespaces ? Object.keys(response.data.namespaces) : [];
+      console.log(response);
       setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
       setcontentLoading(false); // Stop loading once data is fetched
     } catch (e) {
@@ -96,39 +98,58 @@ export default function Sidebar() {
       <div className="flex flex-col gap-3 mt-5">
         {contentLoading ? (
           <Loader />
-        ) : (
-          collectionName.map((collection, index) => (
-            <div
-              key={index}
-              className={`p-3 rounded-lg cursor-pointer transition-all duration-300 ${
-                selected === collection
-                  ? "bg-[#292929] text-[#ff8c42] font-medium shadow-sm"
-                  : "bg-transparent hover:bg-[#252525] text-gray-300"
-              }`}
-              onClick={() => setSelected(collection)}
-            >
-              <div className="flex justify-between">
-                <h2>{collection}</h2>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (
-                      window.confirm(
-                        `Are you sure you want to delete "${collection}"?`
-                      )
-                    ) {
-                      console.log(`Deleted collection: ${collection}`);
-                    }
-                  }}
-                  className="ml-2 text-red-500 hover:text-red-700 transition-all duration-200"
-                  title="Delete Collection"
-                >
-                  🗑️
-                </button>
-              </div>
+        ) :(collectionName.map((collection, index) => (
+          <div
+            key={index}
+            className={`p-3 rounded-lg cursor-pointer transition-all duration-300 ${
+              selected === collection
+                ? "bg-[#292929] text-[#ff8c42] font-medium shadow-sm"
+                : "bg-transparent hover:bg-[#252525] text-gray-300"
+            }`}
+          >
+            <div className="flex justify-between items-center">
+              <h2 onClick={() => setSelected(collection)}>{collection}</h2>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (
+                    window.confirm(
+                      `Are you sure you want to delete "${collection}"?`
+                    )
+                  ) {
+                    console.log(`Deleted collection: ${collection}`);
+                  }
+                }}
+                className="ml-2 text-red-500 hover:text-red-700 transition-all duration-200"
+                title="Delete Collection"
+              >
+                🗑️
+              </button>
             </div>
-          ))
-        )}
+        
+            {/* Dropdown for files */}
+            <div className="mt-2">
+              {response.data.namespaces[collection]?.files ? (
+                <details className="bg-[#252525] p-2 rounded-lg">
+                  <summary className="text-gray-300 cursor-pointer">
+                    View Files
+                  </summary>
+                  <ul className="mt-2 text-gray-400">
+                    {Object.keys(response.data.namespaces[collection].files).map(
+                      (fileName, fileIndex) => (
+                        <li key={fileIndex} className="py-1">
+                          {fileName}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </details>
+              ) : (
+                <p className="text-sm text-gray-500">No files available</p>
+              )}
+            </div>
+          </div>
+        )))}
       </div>
 
       {/* Upload Section */}
@@ -149,7 +170,7 @@ export default function Sidebar() {
         {/* File Upload Button */}
         <div className="flex items-center space-x-3 mt-3">
           <label className="flex items-center justify-center bg-[#383838] hover:bg-[#444444] text-gray-200 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200">
-            📁 Select File
+            📁
             <input type="file" className="hidden" onChange={handleFileChange} />
           </label>
           <span className="text-sm text-gray-400">

@@ -9,7 +9,7 @@ const ProfileSec = () => {
   console.log(rerankedDocuments)
  },[])
   return (
-    <div className="absolute top-4 right-4 z-50 bg-white p-4 rounded-lg shadow-md">
+    <div className="absolute w-60 top-4 right-4 z-50 p-4 rounded-lg shadow-md">
       <SignedOut>
         <SignInButton>
           <FaUserCircle size={32} className="text-gray-300 hover:text-white transition-all cursor-pointer" />
@@ -20,7 +20,7 @@ const ProfileSec = () => {
         {/* Display reranked documents */}
         <div className="mt-4 text-sm text-gray-700">
           <h3 className="font-semibold">Reranked Documents:</h3>
-          <div className="h-[60vh] overflow-scroll mt-16 scrollbar-hide">
+          <div className="hidden lg:flex h-[60vh] overflow-scroll mt-16 scrollbar-hide">
             {rerankedDocuments.length > 0 ? 
               <h2 className="list-disc pl-5">
                 {rerankedDocuments}
