@@ -29,12 +29,12 @@ const AIChatSection = () => {
         ))}
       </div>
 
-      <a
+      {/* <a
         href="#"
         className="inline-flex justify-center items-center text-center w-auto h-12 px-6 mt-12 tracking-tight text-xl border border-blue-500 rounded-lg transition duration-200 bg-gradient-to-r from-blue-500 to-purple-800 text-white hover:opacity-90"
       >
         Try for Free
-      </a>
+      </a> */}
     </div>
   );
 };
