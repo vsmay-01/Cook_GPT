@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { SelectedCollectionContext } from "../../context/SelectedContext"; // Ensure this path is correct
 import Loader from "./Loader";
+const API_URL = "https://cook-backend-8gfj.onrender.com";
 
 export default function Sidebar() {
   const context = useContext(SelectedCollectionContext);
@@ -36,7 +37,7 @@ export default function Sidebar() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/delete", {
+      const response = await fetch(`${API_URL}/delete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,17 +63,17 @@ export default function Sidebar() {
 
   const userCollection = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:5000/index-info", {
+      const response = await axios.get(`${API_URL}/index-info`, {
         params: {
           user: user?.username,
         },
       });
-  
+
       const namespaces = response.data.namespaces
         ? Object.keys(response.data.namespaces)
         : [];
       console.log(response);
-  
+
       setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
       setCollectionsData(response.data.namespaces); // Update collectionsData with the namespaces object
       setContentLoading(false); // Stop loading once data is fetched
@@ -97,29 +98,29 @@ export default function Sidebar() {
       setMessage("Both file and collection name are required.");
       return;
     }
-  
+
     setLoading(true);
     setMessage("Uploading file...");
-  
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("user", user?.username);
     formData.append("collection", newCollectionName);
-  
+
     try {
-      await axios.post("http://127.0.0.1:5000/upload", formData, {
+      await axios.post(`${API_URL}/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
+
       setNewCollectionName("");
       setMessage("File uploaded successfully!");
       alert("File uploaded successfully!");
-  
+
       // Poll the server for updated collections for 5 seconds
       const interval = setInterval(() => {
         userCollection();
       }, 1000); // Call userCollection every 1 second
-  
+
       setTimeout(() => {
         clearInterval(interval); // Stop polling after 5 seconds
       }, 5000);
