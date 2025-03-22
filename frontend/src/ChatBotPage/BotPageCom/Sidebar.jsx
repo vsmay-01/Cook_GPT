@@ -162,6 +162,15 @@ export default function Sidebar() {
                 <h2>{collection}</h2>
                 <button
                   onClick={(e) => {
+                   toggleDropdown(collection)
+                  }}
+                  className="ml-2 text-gray-400 hover:text-gray-200 transition-all duration-200"
+                  title="Show Files"
+                >
+                  {expandedCollection === collection ? "▲" : "▼"}
+                </button>
+                <button
+                  onClick={(e) => {
                     e.stopPropagation();
                     if (
                       window.confirm(
@@ -175,8 +184,9 @@ export default function Sidebar() {
                   className="ml-2 text-gray-400 hover:text-gray-200 transition-all duration-200"
                   title="Show Files"
                 >
-                  {expandedCollection === collection ? "▲" : "▼"}
+               Del
                 </button>
+
               </div>
               
               {/* Files Dropdown */}
