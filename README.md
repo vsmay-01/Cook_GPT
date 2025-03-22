@@ -1,4 +1,4 @@
-# <img src="/robo.jpg" alt="Cook GPT Logo" /> Cook GPT - Your AI-Powered Cooking Assistant
+# <img src="/robo.jpg" alt="Cook GPT Logo" width="100" height="100" /> Cook GPT - Your AI-Powered Cooking Assistant
 
 <div align="center">
   
@@ -9,12 +9,7 @@
   
   <h3>Transform your cooking experience with the power of AI</h3>
   
-  [Features](#-features) • 
-  [Live Demo](#-live-demo) • 
-  [Installation](#%EF%B8%8F-installation) • 
-  [Team](#-meet-the-team) • 
-  [Roadmap](#-roadmap) • 
-  [Contributing](#-contributing)
+  [Features](#-features) • [Live Demo](#-live-demo) • [Installation](#%EF%B8%8F-installation) • [Team](#-meet-the-team) • [Roadmap](#-roadmap) • [Contributing](#-contributing)
   
 </div>
 
@@ -22,90 +17,50 @@
 
 ## 📋 Overview
 
-**Cook GPT** revolutionizes your kitchen experience by combining cutting-edge AI with culinary expertise. Our platform helps you discover recipes, plan meals, utilize ingredients efficiently, and make cooking an enjoyable adventure - all powered by sophisticated artificial intelligence.
+**CHAT BOTS**  are everywhere these days — helping us shop, solving our tech woes, and even keeping us company. But what if you could build a chatbot that’s not just helpful, but actually smart? 😎
 
-<div align="center">
-  <img src="/api/placeholder/700/350" alt="Cook GPT Dashboard" />
+<div align='center'>
+<img src="/robo.jpg" alt="Cook GPT Logo" width="100" height="100" />
 </div>
 
 ---
 
 ## 🌟 Features
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center"><b>🧠 AI-Powered</b></td>
-      <td align="center"><b>🥗 Personalized</b></td>
-      <td align="center"><b>⏱️ Time-Saving</b></td>
-      <td align="center"><b>💰 Cost-Effective</b></td>
-    </tr>
-  </table>
-</div>
+### Problem Statement
 
-- 🧑‍🍳 **Smart Recipe Suggestions**
-  - Get personalized recipe recommendations based on:
-    - Dietary preferences (vegetarian, vegan, gluten-free, etc.)
-    - Available ingredients in your pantry
-    - Cooking skill level
-    - Time constraints
+Cooking can be overwhelming and time-consuming, especially when you’re unsure of what to make, how to plan meals, or how to use the ingredients you already have. Grocery shopping can also be inefficient, leading to food waste and unnecessary expenses. Cook GPT addresses these challenges with the following features:
 
-- 🛒 **Intelligent Shopping List Generator**
-  - Automatically create optimized shopping lists
-  - Combines ingredients across multiple recipes
-  - Suggests cost-effective alternatives
-  - Integrates with popular grocery delivery services
 
-- 📅 **Dynamic Meal Planner**
-  - Plan balanced meals for days, weeks, or months
-  - Nutritional analytics and calorie tracking
-  - Special occasion planning
-  - Leftover management suggestions
 
-- 📸 **Visual Recognition Technology**
-  - Scan your fridge or pantry
-  - Identify ingredients from photos
-  - Get instant recipe suggestions based on what you have
 
-- 🌐 **Enhanced Accessibility**
-  - Supports 20+ languages
-  - Voice-command enabled
-  - Screen-reader compatible
-  - Offline mode available
+- 🧑‍🍳 **Retrieval-Augmented Generation (RAG): Enhancing Chatbots with Searchable Knowledge**
+  - Enter RAG (Retrieval-Augmented Generation). It’s like giving your chatbot a brain full of searchable knowledge. Imagine a chatbot that could tap into a vast library of information and generate creative text. That’s the magic of RAG.
 
-- 📊 **Culinary Analytics**
-  - Track your cooking habits and preferences
-  - Nutritional insights dashboard
-  - Seasonal ingredient recommendations
-  - Personalized cooking skill development
+
+- And to make things even easier, there’s LangChain —  think of it as a set of super helpful building    blocks for creating all kinds of AI applications. As the saying goes, “Give a man a fish and you feed him for a day; teach a man to fish and you feed him for a lifetime” Let’s teach you to build an awesomely  intelligent chatbot! 🤖
+
+
 
 ---
 
-## 📈 User Growth
 
-Our platform has seen exceptional growth since launch:
-
-<div align="center">
-  <img src="/api/placeholder/600/300" alt="User Growth Chart" />
-  <p><i>Monthly active users growth over the past year</i></p>
-</div>
-
----
 
 ## 🚀 Live Demo
 
 Experience Cook GPT in action:
-- **Web App**: [cookg.pt/demo](https://cookg.pt/demo)
-- **Mobile App**: Available on [iOS App Store](https://apps.apple.com) and [Google Play Store](https://play.google.com)
-
+- **Web App**: [cookg.pt/demo](https://cook-backend-8gfj.onrender.com)
+- **Mobile App**: Available Soon......
 ---
 
 ## 🛠️ Installation
 
-### Prerequisites
+### Prerequisites/
 - Node.js (v16+)
 - MongoDB
 - OpenAI API key
+- Google Vision API key (for image recognition)
+- Google Vision API key (for image recognition)
 - Google Vision API key (for image recognition)
 
 ### Step-by-Step Setup
@@ -143,12 +98,6 @@ Experience Cook GPT in action:
 6. **Access the Application**:
    Open your browser and navigate to `http://localhost:3000`
 
-### Docker Installation
-
-For Docker enthusiasts:
-```bash
-docker-compose up -d
-```
 
 ---
 
@@ -278,6 +227,83 @@ docker-compose up -d
     </tr>
   </table>
 </div>
+
+---
+
+# Backend Technologies
+
+The backend of Cook GPT is designed to handle AI-powered cooking assistance efficiently. It leverages modern frameworks and libraries to ensure scalability, performance, and ease of development.
+
+## 🛠️ Backend Tech Stack
+
+- **Flask**: A lightweight WSGI web application framework for building APIs.
+- **Python-dotenv**: For managing environment variables securely.
+- **LangChain**: A framework for developing applications powered by language models.
+  - **LangChain Community**: Community-driven tools and integrations.
+  - **LangChain Text Splitters**: For efficient text processing.
+  - **LangChain Google GenAI**: Integration with Google Generative AI.
+  - **LangChain Pinecone**: Integration with Pinecone for vector storage.
+- **Pinecone**: A vector database for fast and scalable similarity search.
+- **SpeechRecognition**: For converting speech to text.
+- **PyPDF**: For handling PDF files.
+- **PDF2Image**: For converting PDF pages to images.
+- **PyTesseract**: Optical character recognition (OCR) tool for extracting text from images.
+- **Scikit-learn**: For machine learning and data analysis.
+- **Flask-CORS**: To enable Cross-Origin Resource Sharing (CORS) in Flask applications.
+
+---
+
+## 🛠️ Backend Setup Instructions
+
+### Prerequisites
+
+Ensure the following are installed on your system:
+- Python 3.8 or higher
+- pip (Python package manager)
+- Tesseract-OCR (for OCR functionality)
+
+### Step-by-Step Setup
+
+1. **Navigate to the Backend Directory**:
+   ```bash
+   cd backend
+   ```
+
+2. **Create a Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install Dependencies**:
+   Install the required Python packages listed in `requirements.txt`:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configure Environment Variables**:
+   Create a `.env` file in the `backend` directory:
+   ```
+   FLASK_APP=app.py
+   FLASK_ENV=development
+   API_KEY=your_openai_api_key
+   GOOGLE_VISION_API_KEY=your_google_vision_api_key
+   DATABASE_URL=your_mongodb_url
+   JWT_SECRET=your_jwt_secret
+   ```
+
+5. **Run the Backend Server**:
+   Start the Flask development server:
+   ```bash
+   flask run
+   ```
+
+6. **Test the API**:
+   Open your browser or use a tool like Postman to test the API at `http://127.0.0.1:5000`.
+
+---
+
+By following these steps, you will have the backend of Cook GPT up and running, ready to handle requests and power the AI-driven cooking assistant.
 
 ---
 
