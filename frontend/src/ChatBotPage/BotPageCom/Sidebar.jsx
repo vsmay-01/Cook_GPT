@@ -39,7 +39,7 @@ export default function Sidebar() {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            user: user,
+            user: user.username,
             collection: collection
         })
     })
@@ -148,9 +148,8 @@ export default function Sidebar() {
                       window.confirm(
                         `Are you sure you want to delete "${collection}"?`
                       )
-                    
                     ) {
-                      deleteCollection(collection)
+                      deleteCollection(collection);
                       console.log(`Deleted collection: ${collection}`);
                     }
                   }}
