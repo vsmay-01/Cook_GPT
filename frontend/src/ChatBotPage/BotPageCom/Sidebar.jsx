@@ -25,9 +25,40 @@ export default function Sidebar() {
     }
   }, [collectionName]);
 
-  const deleteCollection=()=>{
+  const deleteCollection=(collection)=>{
+    
 
+    if (!user || !collection) {
+        alert("Please provide both user and collection.");
+        return;
+    }
+
+    fetch("http://127.0.0.1:5000/delete", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            user: user,
+            collection: collection
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Success:", data.message);
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error("Error deleting collection:", error);
+        alert("Failed to delete collection: " + error.message);
+    });
   }
+
   const userCollection = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:5000/index-info", {
@@ -117,7 +148,9 @@ export default function Sidebar() {
                       window.confirm(
                         `Are you sure you want to delete "${collection}"?`
                       )
+                    
                     ) {
+                      deleteCollection(collection)
                       console.log(`Deleted collection: ${collection}`);
                     }
                   }}
