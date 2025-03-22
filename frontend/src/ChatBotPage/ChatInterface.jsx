@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, useState} from 'react';
 import { useUser } from '@clerk/clerk-react';
 import Sidebar from './BotPageCom/Sidebar';
 import ChatInput from './BotPageCom/ChatInput';
@@ -8,40 +8,69 @@ import { ChatResProvider } from "../context/ChatResContext"; // Use the correct 
 
 const ChatInterface = () => {
   const { isSignedIn, user } = useUser();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <SelectedCollectionProvider>
       <ChatResProvider>
-        <div className="w-full h-screen flex bg-gradient-to-b from-[#1a1a1a] to-[#121212] overflow-hidden">
+        <div className="w-full h-screen flex flex-col lg:flex-row bg-gradient-to-b from-[#1a1a1a] to-[#121212] overflow-hidden">
 
-          {/* Sidebar (Fixed Left) */}
-          <div className="hidden lg:flex w-[280px] h-[50vh] bg-[#181818] bg-opacity-80 backdrop-blur-md shadow-lg fixed left-0 top-0 z-10 rounded-3xl mb-7">
-            <Sidebar />
+          {/* Mobile Sidebar Button */}
+          <div className="lg:hidden fixed top-4 left-4 z-30">
+            <button
+              className="bg-gray-800 text-white p-2 rounded-lg shadow-lg"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              ☰
+            </button>
           </div>
 
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-row items-start justify-start h-full max-w-full overflow-y-auto ml-[280px]">
-            <div className="w-full max-w-3xl bg-[#1c1c1c] bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-xl border border-gray-700 mt-2 p-5 mb-3 ml-7">
-              <h1 className="text-4xl font-extrabold text-blue-600 text-center mb-8 tracking-wide">
-                Manage Your Collections and Upload Documents
-              </h1>
+          {/* Sidebar (Hidden on small screens, slides in when button is clicked) */}
+          <div className={`lg:w-1/5 fixed top-0 left-0 h-full bg-[#181818] bg-opacity-80 backdrop-blur-md shadow-lg p-5 transition-transform duration-300 ease-in-out z-40 
+            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
+            <Sidebar />
+            {/* Close Button (only visible on small screens) */}
+            <button
+              className="lg:hidden mt-4 bg-red-500 text-white px-3 py-1 rounded-md"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+
+          {/* Clickable overlay to close sidebar when open */}
+          {isSidebarOpen && (
+            <div
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+              onClick={() => setIsSidebarOpen(false)}
+            ></div>
+          )}
+
+          {/* Main Content */}
+          <div className="lg:w-3/5 w-full flex flex-col items-center justify-start h-full max-w-full overflow-y-auto lg:ml-[20%] p-5">
+            <div className="w-full max-w-3xl bg-[#1c1c1c] bg-opacity-0 backdrop-blur-lg rounded-3xl shadow-xl  p-5">
+              {/* <h1 className="text-4xl font-sans-bold text-blue-600 text-center mb-8 tracking-wide">
+               Hello, there!!
+              </h1> */}
 
               {/* ChatInput Section */}
-              <div className="w-full flex flex-col items-center justify-start space-y-4">
+              <div className="w-[100%] flex flex-col items-center justify-start space-y-4">
                 <ChatInput />
               </div>
             </div>
-
           </div>
 
-          {/* Profile Icon */}
-          <div className="absolute top-6 right-6 bg-[#ff8c42] rounded-full p-3 shadow-lg z-20">
-            <ProfileSec />
+          {/* Right Sidebar (Moves below main content on small screens) */}
+          <div className="lg:w-1/5 w-full lg:h-screen hidden lg:flex justify-center lg:items-start lg:relative absolute bottom-0 p-5">
+            <div className="bg-[#181818] bg-opacity-80 backdrop-blur-md shadow-lg rounded-3xl p-4 w-full max-w-xs">
+              <ProfileSec />
+            </div>
           </div>
 
         </div>
       </ChatResProvider>
     </SelectedCollectionProvider>
+
   );
 };
 
