@@ -1,7 +1,13 @@
 import React, { useContext, useEffect } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react"; // Import useUser
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+  useUser,
+} from "@clerk/clerk-react";
 import { FaUserCircle } from "react-icons/fa";
-import { ChatResContext } from "../../context/ChatResContext"; // Import ChatResContext
+import { ChatResContext } from "../../context/ChatResContext";
 
 const ProfileSec = () => {
   const { rerankedDocuments } = useContext(ChatResContext); // Access ChatResContext
@@ -9,31 +15,41 @@ const ProfileSec = () => {
 
   useEffect(() => {
     console.log(rerankedDocuments);
-  }, []);
-  
+  }, [rerankedDocuments]);
+
   return (
-    <div className="absolute top-6 right-6 z-50 bg-[#1c1c1c] bg-opacity-90 backdrop-blur-lg p-4 rounded-lg shadow-lg border-2 border-gray-600">
-      <SignedOut>
-        <SignInButton>
-          <FaUserCircle size={32} className="text-gray-100 hover:text-white transition-all cursor-pointer" />
-        </SignInButton>
-      </SignedOut>
-      <div className="flex items-center space-x-2">
-        <UserButton />
-        {user && <span className="text-gray-100 text-sm">{user.firstName}</span>} {/* Display user's first name */}
+    <div className="fixed top-4 right-4 z-50 bg-[#1A1A1A]/80 backdrop-blur-md p-3 rounded-lg shadow-lg border border-[#3B82F6]/50 w-[85%] sm:w-[300px] md:w-[350px] max-h-[80vh] overflow-hidden">
+      {/* Profile Icon Section */}
+      <div className="absolute top-2 right-2 z-60 flex justify-end">
+        <SignedOut>
+          <SignInButton>
+            <FaUserCircle
+              size={28}
+              className="text-gray-300 hover:text-[#3B82F6] transition-all cursor-pointer"
+            />
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
+
+      {/* Reranked Documents Section */}
       <SignedIn>
-        {/* Display reranked documents */}
-        <div className="mt-4 text-sm text-gray-300">
-          <h3 className="font-semibold">Reranked Documents:</h3>
-          <div className="hidden lg:flex h-[60vh] overflow-scroll mt-16 scrollbar-hide">
-            {rerankedDocuments.length > 0 ? 
-              <h2 className="list-disc pl-5">
+        <div className="mt-10 text-sm text-gray-300">
+          <h3 className="font-semibold text-[#3B82F6] text-xs md:text-sm">
+            Reranked Documents:
+          </h3>
+          <div className="mt-2 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#3B82F6] scrollbar-track-[#1A1A1A]">
+            {rerankedDocuments?.length > 0 ? (
+              <p className="text-gray-200 text-xs md:text-sm whitespace-pre-wrap">
                 {rerankedDocuments}
-              </h2>
-            : 
-              <p>No documents available.</p>
-            }
+              </p>
+            ) : (
+              <p className="text-gray-400 text-xs md:text-sm">
+                No documents available.
+              </p>
+            )}
           </div>
         </div>
       </SignedIn>
