@@ -67,12 +67,14 @@ export default function Sidebar() {
           user: user?.username,
         },
       });
-
+  
       const namespaces = response.data.namespaces
         ? Object.keys(response.data.namespaces)
         : [];
       console.log(response);
+  
       setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
+      setCollectionsData(response.data.namespaces); // Update collectionsData with the namespaces object
       setContentLoading(false); // Stop loading once data is fetched
     } catch (e) {
       console.log("error", e);
@@ -95,24 +97,32 @@ export default function Sidebar() {
       setMessage("Both file and collection name are required.");
       return;
     }
-
+  
     setLoading(true);
     setMessage("Uploading file...");
-
+  
     const formData = new FormData();
     formData.append("file", file);
     formData.append("user", user?.username);
     formData.append("collection", newCollectionName);
-
+  
     try {
       await axios.post("http://127.0.0.1:5000/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
+  
       setNewCollectionName("");
       setMessage("File uploaded successfully!");
       alert("File uploaded successfully!");
-      userCollection(); // Refresh the collections after upload
+  
+      // Poll the server for updated collections for 5 seconds
+      const interval = setInterval(() => {
+        userCollection();
+      }, 1000); // Call userCollection every 1 second
+  
+      setTimeout(() => {
+        clearInterval(interval); // Stop polling after 5 seconds
+      }, 5000);
     } catch (error) {
       setMessage(
         `Upload failed: ${error.response?.data?.error || error.message}`
@@ -123,12 +133,16 @@ export default function Sidebar() {
   };
 
   const toggleDropdown = (collection) => {
-    setExpandedCollection(expandedCollection === collection ? null : collection);
+    if (expandedCollection === collection) {
+      setExpandedCollection(null);
+    } else {
+      setExpandedCollection(collection);
+    }
   };
 
   const getFilesForCollection = (collection) => {
     if (collectionsData[collection] && collectionsData[collection].files) {
-      return Object.keys(collectionsData[collection].files);
+      return Object.keys(collectionsData[collection].files); // Return file names
     }
     return [];
   };
@@ -140,7 +154,6 @@ export default function Sidebar() {
         Collections
       </h2>
 
-
       {/* Collections List */}
       <div className="flex flex-col gap-3 mt-5 mb-5 flex-grow overflow-y-auto max-h-[60vh]">
         {contentLoading ? (
@@ -149,13 +162,24 @@ export default function Sidebar() {
           collectionName.map((collection, index) => (
             <div key={index} className="rounded-lg transition-all duration-300">
               <div
-                className={`p-3 rounded-lg cursor-pointer flex justify-between items-center ${selected === collection
-                  ? "bg-[#292929] text-[#ff8c42] font-medium shadow-sm"
-                  : "bg-transparent hover:bg-[#252525] text-gray-300"
-                  }`}
+                className={`p-3 rounded-lg cursor-pointer flex justify-between items-center ${
+                  selected === collection
+                    ? "bg-[#292929] text-[#ff8c42] font-medium shadow-sm"
+                    : "bg-transparent hover:bg-[#252525] text-gray-300"
+                }`}
                 onClick={() => setSelected(collection)}
               >
                 <h2>{collection}</h2>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDropdown(collection);
+                  }}
+                  className="ml-2 text-gray-400 hover:text-gray-200 transition-all duration-200"
+                  title="Show Files"
+                >
+                  {expandedCollection === collection ? "▲" : "▼"}
+                </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -172,7 +196,7 @@ export default function Sidebar() {
                   className="ml-2 text-gray-400 hover:text-gray-200 transition-all duration-200"
                   title="Show Files"
                 >
-                  {expandedCollection === collection ? "▲" : "▼"}
+                  Del
                 </button>
               </div>
 
@@ -180,14 +204,16 @@ export default function Sidebar() {
               {expandedCollection === collection && (
                 <div className="ml-4 pl-2 mt-1 border-l-2 border-[#3d3d3d] text-sm">
                   {getFilesForCollection(collection).length > 0 ? (
-                    getFilesForCollection(collection).map((fileName, fileIndex) => (
-                      <div
-                        key={fileIndex}
-                        className="py-2 text-gray-400 hover:text-gray-200 cursor-pointer"
-                      >
-                        {fileName}
-                      </div>
-                    ))
+                    getFilesForCollection(collection).map(
+                      (fileName, fileIndex) => (
+                        <div
+                          key={fileIndex}
+                          className="py-2 text-gray-400 hover:text-gray-200 cursor-pointer"
+                        >
+                          {fileName}
+                        </div>
+                      )
+                    )
                   ) : (
                     <div className="py-2 text-gray-500 italic">No files</div>
                   )}
@@ -203,7 +229,6 @@ export default function Sidebar() {
         <h2 className="text-xl font-extrabold text-indigo-600 mb-3">
           Upload Document
         </h2>
-
 
         {/* Collection Name Input */}
         <input
@@ -229,10 +254,11 @@ export default function Sidebar() {
         <button
           onClick={handleUpload}
           disabled={loading || !file || !newCollectionName.trim()}
-          className={`mt-3 w-full py-2 text-center font-medium rounded-lg transition-all duration-200 ${loading || !file || !newCollectionName.trim()
-            ? "bg-gray-600 cursor-not-allowed text-gray-400"
-            : "bg-gradient-to-r from-indigo-500 to-teal-500 hover:bg-gradient-to-r hover:from-indigo-400 hover:to-teal-400 text-white"
-            }`}
+          className={`mt-3 w-full py-2 text-center font-medium rounded-lg transition-all duration-200 ${
+            loading || !file || !newCollectionName.trim()
+              ? "bg-gray-600 cursor-not-allowed text-gray-400"
+              : "bg-gradient-to-r from-indigo-500 to-teal-500 hover:bg-gradient-to-r hover:from-indigo-400 hover:to-teal-400 text-white"
+          }`}
         >
           {loading ? (
             <span className="text-yellow-300">Uploading...</span>

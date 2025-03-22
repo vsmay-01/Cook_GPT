@@ -17,23 +17,22 @@ const ProfileSec = () => {
           <FaUserCircle size={32} className="text-gray-300 hover:text-white transition-all cursor-pointer" />
         </SignInButton>
       </SignedOut>
+      <div>
+      <UserButton />
+        </div>
       <SignedIn>
-        <UserButton />
+       
         {/* Display reranked documents */}
-        <div className="mt-4 text-sm text-gray-300">
-          <h3 className="font-semibold text-white">Reranked Documents:</h3>
-          <div className="h-[60vh] overflow-scroll mt-4 scrollbar-hide">
-            {rerankedDocuments.length > 0 ? (
-              <ul className="list-disc pl-5">
-                {rerankedDocuments.map((doc, index) => (
-                  <li key={index} className="text-gray-400">
-                    {doc}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-400">No documents available.</p>
-            )}
+        <div className="mt-4 text-sm text-gray-700">
+          <h3 className="font-semibold">Reranked Documents:</h3>
+          <div className="hidden lg:flex h-[60vh] overflow-scroll mt-16 scrollbar-hide">
+            {rerankedDocuments.length > 0 ? 
+              <h2 className="list-disc pl-5">
+                {rerankedDocuments}
+              </h2>
+            : 
+              <p>No documents available.</p>
+            }
           </div>
         </div>
       </SignedIn>
