@@ -38,7 +38,6 @@ const ProfileSec = () => {
         </div>
       </SignedIn>
     </div>
-
   );
 };
 

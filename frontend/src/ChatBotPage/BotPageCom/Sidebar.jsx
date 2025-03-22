@@ -11,6 +11,7 @@ export default function Sidebar() {
       "Sidebar must be used within a SelectedCollectionContext.Provider"
     );
   }
+
   const { selected, setSelected } = context; // Use context here
   const [collectionName, setCollectionName] = useState([]);
   const [collectionsData, setCollectionsData] = useState({});
@@ -20,47 +21,44 @@ export default function Sidebar() {
   const [loading, setLoading] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const { isSignedIn, user, isLoaded } = useUser();
-  const [contentLoading, setcontentLoading] = useState(false);
+  const [contentLoading, setContentLoading] = useState(false);
 
   useEffect(() => {
     if (collectionName.length === 0) {
-      setcontentLoading(true);
+      setContentLoading(true);
     }
   }, [collectionName]);
 
-  const deleteCollection=(collection)=>{
-    
-
+  const deleteCollection = async (collection) => {
     if (!user || !collection) {
-        alert("Please provide both user and collection.");
-        return;
+      alert("Please provide both user and collection.");
+      return;
     }
 
-    fetch("http://127.0.0.1:5000/delete", {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/delete", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            user: user.username,
-            collection: collection
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Success:", data.message);
-        alert(data.message);
-    })
-    .catch(error => {
-        console.error("Error deleting collection:", error);
-        alert("Failed to delete collection: " + error.message);
-    });
-  }
+          user: user.username,
+          collection: collection,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      alert(data.message); // Notify the user
+      console.log("Success:", data.message);
+    } catch (error) {
+      console.error("Error deleting collection:", error);
+      alert("Failed to delete collection: " + error.message);
+    }
+  };
 
   const userCollection = async () => {
     try {
@@ -70,19 +68,22 @@ export default function Sidebar() {
         },
       });
 
-      // Extract keys from the namespaces object
-      const namespaces = response.data.namespaces ? Object.keys(response.data.namespaces) : [];
+      const namespaces = response.data.namespaces
+        ? Object.keys(response.data.namespaces)
+        : [];
       console.log(response);
       setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
-      setcontentLoading(false); // Stop loading once data is fetched
+      setContentLoading(false); // Stop loading once data is fetched
     } catch (e) {
       console.log("error", e);
-      setcontentLoading(false); // Stop loading even if there's an error
+      setContentLoading(false); // Stop loading even if there's an error
     }
   };
 
   useEffect(() => {
-    user && userCollection();
+    if (user) {
+      userCollection();
+    }
   }, [user]);
 
   const handleFileChange = (e) => {
@@ -122,11 +123,7 @@ export default function Sidebar() {
   };
 
   const toggleDropdown = (collection) => {
-    if (expandedCollection === collection) {
-      setExpandedCollection(null);
-    } else {
-      setExpandedCollection(collection);
-    }
+    setExpandedCollection(expandedCollection === collection ? null : collection);
   };
 
   const getFilesForCollection = (collection) => {
@@ -139,9 +136,10 @@ export default function Sidebar() {
   return (
     <div className="w-72 h-screen bg-[#181818] p-6 mb-7 border-r border-[#2d2d2d] flex flex-col shadow-lg rounded-3xl overflow-hidden">
       {/* Sidebar Header */}
-      <h2 className="text-lg font-semibold text-gray-100 uppercase tracking-widest pb-4 border-b border-[#2d2d2d]">
+      <h2 className="text-xl font-bold text-blue-500 uppercase tracking-wide pb-4 border-b-2 border-gray-600">
         Collections
       </h2>
+
 
       {/* Collections List */}
       <div className="flex flex-col gap-3 mt-5 mb-5 flex-grow overflow-y-auto max-h-[60vh]">
@@ -151,11 +149,10 @@ export default function Sidebar() {
           collectionName.map((collection, index) => (
             <div key={index} className="rounded-lg transition-all duration-300">
               <div
-                className={`p-3 rounded-lg cursor-pointer flex justify-between items-center ${
-                  selected === collection
-                    ? "bg-[#292929] text-[#ff8c42] font-medium shadow-sm"
-                    : "bg-transparent hover:bg-[#252525] text-gray-300"
-                }`}
+                className={`p-3 rounded-lg cursor-pointer flex justify-between items-center ${selected === collection
+                  ? "bg-[#292929] text-[#ff8c42] font-medium shadow-sm"
+                  : "bg-transparent hover:bg-[#252525] text-gray-300"
+                  }`}
                 onClick={() => setSelected(collection)}
               >
                 <h2>{collection}</h2>
@@ -178,14 +175,14 @@ export default function Sidebar() {
                   {expandedCollection === collection ? "▲" : "▼"}
                 </button>
               </div>
-              
+
               {/* Files Dropdown */}
               {expandedCollection === collection && (
                 <div className="ml-4 pl-2 mt-1 border-l-2 border-[#3d3d3d] text-sm">
                   {getFilesForCollection(collection).length > 0 ? (
                     getFilesForCollection(collection).map((fileName, fileIndex) => (
-                      <div 
-                        key={fileIndex} 
+                      <div
+                        key={fileIndex}
                         className="py-2 text-gray-400 hover:text-gray-200 cursor-pointer"
                       >
                         {fileName}
@@ -203,9 +200,10 @@ export default function Sidebar() {
 
       {/* Upload Section (Fixed to the Bottom with Bottom Margin) */}
       <div className="mt-6 p-4 rounded-lg bg-[#292929] shadow-lg">
-        <h2 className="text-lg font-semibold mb-3 text-gray-200">
+        <h2 className="text-xl font-extrabold text-indigo-600 mb-3">
           Upload Document
         </h2>
+
 
         {/* Collection Name Input */}
         <input
@@ -246,6 +244,5 @@ export default function Sidebar() {
         {message && <p className="text-xs text-gray-300 mt-2">{message}</p>}
       </div>
     </div>
-
   );
 }
