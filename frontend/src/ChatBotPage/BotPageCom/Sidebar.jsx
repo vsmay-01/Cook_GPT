@@ -28,10 +28,47 @@ export default function Sidebar() {
     }
   }, [collectionName]);
 
+<<<<<<< HEAD
   const deleteCollection = () => {
     // Implementation for delete functionality
   };
 
+=======
+  const deleteCollection=(collection)=>{
+    
+
+    if (!user || !collection) {
+        alert("Please provide both user and collection.");
+        return;
+    }
+
+    fetch("http://127.0.0.1:5000/delete", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            user: user.username,
+            collection: collection
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Success:", data.message);
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error("Error deleting collection:", error);
+        alert("Failed to delete collection: " + error.message);
+    });
+  }
+
+>>>>>>> 31e407a383d2c7c45168bc4afaf03b7f8f4c85f0
   const userCollection = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:5000/index-info", {
@@ -43,9 +80,13 @@ export default function Sidebar() {
       // Extract keys from the namespaces object
       const namespaces = response.data.namespaces ? Object.keys(response.data.namespaces) : [];
       console.log(response);
+<<<<<<< HEAD
 
       setCollectionName(namespaces); // Set the keys as the collection names
       setCollectionsData(response.data.namespaces || {}); // Store the full namespaces data
+=======
+      setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
+>>>>>>> 31e407a383d2c7c45168bc4afaf03b7f8f4c85f0
       setcontentLoading(false); // Stop loading once data is fetched
     } catch (e) {
       console.log("error", e);
@@ -134,7 +175,18 @@ export default function Sidebar() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+<<<<<<< HEAD
                     toggleDropdown(collection);
+=======
+                    if (
+                      window.confirm(
+                        `Are you sure you want to delete "${collection}"?`
+                      )
+                    ) {
+                      deleteCollection(collection);
+                      console.log(`Deleted collection: ${collection}`);
+                    }
+>>>>>>> 31e407a383d2c7c45168bc4afaf03b7f8f4c85f0
                   }}
                   className="ml-2 text-gray-400 hover:text-gray-200 transition-all duration-200"
                   title="Show Files"
@@ -183,7 +235,7 @@ export default function Sidebar() {
         {/* File Upload Button */}
         <div className="flex items-center space-x-3 mt-3">
           <label className="flex items-center justify-center bg-[#383838] hover:bg-[#444444] text-gray-200 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200">
-            📁 Select File
+            📁
             <input type="file" className="hidden" onChange={handleFileChange} />
           </label>
           <span className="text-sm text-gray-400">

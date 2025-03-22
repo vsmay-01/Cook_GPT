@@ -3,8 +3,8 @@ import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
 import { SelectedCollectionContext } from "../../context/SelectedContext";
 import { ChatResContext } from "../../context/ChatResContext";
-import ChatLoader from './ChatLoader';
-import EmptyPage from './EmptyPage';
+import ChatLoader from "./ChatLoader";
+import EmptyPage from "./EmptyPage";
 
 export default function Dashboard() {
   const [message, setMessage] = useState("");
@@ -13,7 +13,8 @@ export default function Dashboard() {
   const [response, setResponse] = useState(null);
   const [msg, setMsg] = useState([]);
   const { selected } = useContext(SelectedCollectionContext);
-  const { rerankedDocuments, setRerankedDocuments } = useContext(ChatResContext);
+  const { rerankedDocuments, setRerankedDocuments } =
+    useContext(ChatResContext);
   const { user } = useUser();
 
   // Reference to the chat container for auto-scrolling
@@ -22,7 +23,8 @@ export default function Dashboard() {
   // Function to scroll to the bottom of the chat
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   };
 
@@ -52,7 +54,10 @@ export default function Dashboard() {
 
     // Add a temporary loading message (this will be replaced when response comes)
     const loadingMessageId = Date.now(); // Use timestamp as temp ID
-    setMsg((prev) => [...prev, { id: loadingMessageId, loading: true, sender: "bot" }]);
+    setMsg((prev) => [
+      ...prev,
+      { id: loadingMessageId, loading: true, sender: "bot" },
+    ]);
 
     try {
       const response = await axios.post(
@@ -66,6 +71,7 @@ export default function Dashboard() {
           headers: { "Content-Type": "application/json" },
         }
       );
+      // console.log(response.data.reranked_documents[0].content)
       setRerankedDocuments(response.data.reranked_documents[0].content);
       setResponse(response.data.llm_response);
 
@@ -100,7 +106,9 @@ export default function Dashboard() {
       {/* Chat Header */}
       <div className="bg-[#242424] px-6 py-3 border-b border-gray-800 rounded-t-xl">
         <h2 className="text-gray-200 font-medium">
-          {selected ? `Collection: ${selected}` : "Select a collection to begin"}
+          {selected
+            ? `Collection: ${selected}`
+            : "Select a collection to begin"}
         </h2>
       </div>
 
@@ -117,7 +125,9 @@ export default function Dashboard() {
           msg.map((m, index) => (
             <div
               key={index}
-              className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex ${
+                m.sender === "user" ? "justify-end" : "justify-start"
+              }`}
             >
               <div
                 className={`p-3 rounded-lg max-w-[75%] ${
@@ -150,7 +160,7 @@ export default function Dashboard() {
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Ask something about your document..."
             className="flex-1 p-3 bg-transparent text-gray-200 placeholder-gray-500 focus:outline-none"
-            onKeyPress={(e) => e.key === 'Enter' && !loading && handleQuery()}
+            onKeyPress={(e) => e.key === "Enter" && !loading && handleQuery()}
           />
 
           {/* Button aligned with the input */}
@@ -173,7 +183,9 @@ export default function Dashboard() {
 
         {/* Collection indicator */}
         <div className="mt-2 text-xs text-gray-500 flex justify-between">
-          <span>{selected ? `Querying: ${selected}` : "Please select a collection"}</span>
+          <span>
+            {selected ? `Querying: ${selected}` : "Please select a collection"}
+          </span>
           {message && <span>{message}</span>}
         </div>
       </div>
