@@ -26,9 +26,8 @@ export default function Sidebar() {
   }, [collectionName]);
 
   const deleteCollection=()=>{
-    
-  }
 
+  }
   const userCollection = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:5000/index-info", {
@@ -36,7 +35,10 @@ export default function Sidebar() {
           user: user?.username,
         },
       });
-      setCollectionName(response.data.namespaces);
+
+      // Extract keys from the namespaces object
+      const namespaces = response.data.namespaces ? Object.keys(response.data.namespaces) : [];
+      setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
       setcontentLoading(false); // Stop loading once data is fetched
     } catch (e) {
       console.log("error", e);
@@ -105,13 +107,16 @@ export default function Sidebar() {
               }`}
               onClick={() => setSelected(collection)}
             >
-              <div className="flex  justify-between">
+              <div className="flex justify-between">
                 <h2>{collection}</h2>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (window.confirm(`Are you sure you want to delete "${collection}"?`)) {
-                      // Add your delete logic here
+                    if (
+                      window.confirm(
+                        `Are you sure you want to delete "${collection}"?`
+                      )
+                    ) {
                       console.log(`Deleted collection: ${collection}`);
                     }
                   }}
