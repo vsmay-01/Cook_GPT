@@ -69,6 +69,7 @@ export default function Sidebar() {
 
       // Extract keys from the namespaces object
       const namespaces = response.data.namespaces ? Object.keys(response.data.namespaces) : [];
+      console.log(response);
       setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
       setcontentLoading(false); // Stop loading once data is fetched
     } catch (e) {
@@ -182,7 +183,7 @@ export default function Sidebar() {
         {/* File Upload Button */}
         <div className="flex items-center space-x-3 mt-3">
           <label className="flex items-center justify-center bg-[#383838] hover:bg-[#444444] text-gray-200 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200">
-            📁 Select File
+            📁
             <input type="file" className="hidden" onChange={handleFileChange} />
           </label>
           <span className="text-sm text-gray-400">
