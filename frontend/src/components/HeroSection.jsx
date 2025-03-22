@@ -66,12 +66,12 @@ const HeroSection = () => {
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
           className="flex justify-center mt-8 space-x-4"
         >
-          <button
+          {/* <button
             onClick={handleStartFree}
             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg font-medium transition-transform hover:scale-105"
           >
             Start for Free
-          </button>
+          </button> */}
           <a
             href="#"
             className="py-3 px-6 rounded-lg border border-neutral-700 text-neutral-300 hover:bg-neutral-800 transition-colors"
@@ -94,8 +94,8 @@ const HeroSection = () => {
             autoPlay
             loop
             muted
-            className="rounded-xl w-full lg:w-1/2 border border-blue-500 shadow-md shadow-blue-500/40"
-          >
+            className="rounded-xl w-full h-[400px] lg:w-[48%] lg:h-[400px] border border-blue-500 shadow-md shadow-blue-500/40 backdrop-blur-lg"
+            >
             <source src={video1} type="video/mp4" />
             Your browser does not support the video tag.
           </motion.video>
@@ -107,11 +107,12 @@ const HeroSection = () => {
             autoPlay
             loop
             muted
-            className="rounded-xl w-full lg:w-1/2 border border-blue-500 shadow-md shadow-blue-500/40"
+            className="rounded-xl w-full h-[400px] lg:w-[48%] lg:h-[400px] border border-blue-500 shadow-md shadow-blue-500/40"
           >
             <source src={video2} type="video/mp4" />
             Your browser does not support the video tag.
           </motion.video>
+
         </motion.div>
       </div>
     </div>

@@ -13,22 +13,17 @@ export default function Dashboard() {
   const [response, setResponse] = useState(null);
   const [msg, setMsg] = useState([]);
   const { selected } = useContext(SelectedCollectionContext);
-  const { rerankedDocuments, setRerankedDocuments } =
-    useContext(ChatResContext);
+  const { rerankedDocuments, setRerankedDocuments } = useContext(ChatResContext);
   const { user } = useUser();
 
-  // Reference to the chat container for auto-scrolling
   const chatContainerRef = useRef(null);
 
-  // Function to scroll to the bottom of the chat
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   };
 
-  // Auto-scroll whenever messages change
   useEffect(() => {
     scrollToBottom();
   }, [msg]);
@@ -44,16 +39,14 @@ export default function Dashboard() {
     }
 
     const currentUserInput = userInput;
-    setUserInput(""); // Clear input field immediately when query is sent
+    setUserInput("");
     setLoading(true);
     setMessage("Querying...");
 
-    // Add user message immediately
     const userMessage = { text: currentUserInput, sender: "user" };
     setMsg((prev) => [...prev, userMessage]);
 
-    // Add a temporary loading message (this will be replaced when response comes)
-    const loadingMessageId = Date.now(); // Use timestamp as temp ID
+    const loadingMessageId = Date.now();
     setMsg((prev) => [
       ...prev,
       { id: loadingMessageId, loading: true, sender: "bot" },
@@ -67,15 +60,11 @@ export default function Dashboard() {
           collection: selected || "default_collection",
           query: currentUserInput,
         },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
-      // console.log(response.data.reranked_documents[0].content)
       setRerankedDocuments(response.data.reranked_documents[0].content);
       setResponse(response.data.llm_response);
 
-      // Replace the loading message with the actual response
       setMsg((prev) =>
         prev.map((item) =>
           item.id === loadingMessageId
@@ -83,18 +72,19 @@ export default function Dashboard() {
             : item
         )
       );
-
       setMessage("Query completed successfully!");
     } catch (error) {
-      // Replace the loading message with an error message
       setMsg((prev) =>
         prev.map((item) =>
           item.id === loadingMessageId
-            ? { text: `Error: ${error.response?.data?.error || error.message}`, sender: "bot", isError: true }
+            ? {
+                text: `Error: ${error.response?.data?.error || error.message}`,
+                sender: "bot",
+                isError: true,
+              }
             : item
         )
       );
-
       setMessage(`Query failed: ${error.response?.data?.error || error.message}`);
     } finally {
       setLoading(false);
@@ -102,20 +92,18 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col h-[80vh] bg-[#1e1e1e] rounded-xl overflow-hidden shadow-lg border border-gray-800">
+    <div className="flex flex-col w-full h-[80vh] bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-2xl border border-[#1e2a38] backdrop-blur-sm">
       {/* Chat Header */}
-      <div className="bg-[#242424] px-6 py-3 border-b border-gray-800 rounded-t-xl">
-        <h2 className="text-gray-200 font-medium">
-          {selected
-            ? `Collection: ${selected}`
-            : "Select a collection to begin"}
+      <div className="bg-gradient-to-r from-[#1e2a38] to-[#0f1a28] px-6 py-4 border-b border-[#2e3b4e] rounded-t-2xl">
+        <h2 className="text-[#a1c4fd] font-semibold tracking-wide text-lg">
+          {selected ? `Collection: ${selected}` : "Select a collection to begin"}
         </h2>
       </div>
 
       {/* Chat History */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[#ff8c42] scrollbar-track-[#333]"
+        className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-[#4e9fd1] scrollbar-track-transparent"
       >
         {msg.length === 0 ? (
           <div className="h-full flex items-center justify-center">
@@ -125,23 +113,23 @@ export default function Dashboard() {
           msg.map((m, index) => (
             <div
               key={index}
-              className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"
-                }`}
+              className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`p-3 rounded-lg max-w-[75%] ${m.sender === "user"
-                  ? "bg-[#ff8c42] text-white rounded-tr-none"
-                  : m.isError
-                    ? "bg-[#933] text-gray-100 rounded-tl-none"
-                    : "bg-[#333] text-gray-100 rounded-tl-none"
-                  }`}
+                className={`p-4 rounded-xl max-w-[70%] transition-all duration-300 ${
+                  m.sender === "user"
+                    ? "bg-gradient-to-r from-[#ff6b6b] to-[#ff8c42] text-white shadow-lg shadow-[#ff6b6b]/30 rounded-tr-none"
+                    : m.isError
+                    ? "bg-[#3b1a1a] text-[#ff9999] shadow-lg shadow-[#ff9999]/20 rounded-tl-none"
+                    : "bg-gradient-to-r from-[#1e2a38] to-[#2e3b4e] text-[#d1e8ff] shadow-lg shadow-[#4e9fd1]/20 rounded-tl-none"
+                }`}
               >
                 {m.loading ? (
                   <div className="flex items-center space-x-2">
                     <ChatLoader />
                   </div>
                 ) : (
-                  <div className="whitespace-pre-wrap">{m.text}</div>
+                  <div className="whitespace-pre-wrap text-sm">{m.text}</div>
                 )}
               </div>
             </div>
@@ -150,24 +138,31 @@ export default function Dashboard() {
       </div>
 
       {/* Query Input */}
-      <div className="p-4 bg-[#1f1f1f] border-t border-gray-700 rounded-b-xl">
-        <div className="flex items-center bg-[#333333] rounded-lg overflow-hidden border border-gray-600 focus-within:border-[#ff6b2b] transition-colors">
+      <div className="p-4 bg-[#0f1a28] border-t border-[#2e3b4e] rounded-b-2xl">
+        <div className="flex items-center bg-[#1e2a38]/80 rounded-xl overflow-hidden border border-[#4e9fd1]/30 focus-within:border-[#4e9fd1] focus-within:ring-2 focus-within:ring-[#4e9fd1]/50 transition-all duration-300 backdrop-blur-md">
           <input
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Ask something about your document..."
-            className="flex-1 p-3 bg-transparent text-gray-300 placeholder-gray-400 focus:outline-none"
+            className="flex-1 p-3 bg-transparent text-[#d1e8ff] placeholder-[#6b8299] focus:outline-none text-sm"
             onKeyPress={(e) => e.key === "Enter" && !loading && handleQuery()}
           />
-
-          {/* Button aligned with the input */}
           <button
             onClick={handleQuery}
             disabled={loading}
-            className={`px-4 py-3 bg-gradient-to-r from-[#4e9fd1] to-[#1d73b2] text-white transition-all ${loading ? "opacity-50 cursor-not-allowed" : "hover:from-[#1d73b2] hover:to-[#4e9fd1]"}`}
+            className={`px-5 py-3 bg-gradient-to-r from-[#4e9fd1] to-[#1d73b2] text-white transition-all duration-300 ${
+              loading
+                ? "opacity-60 cursor-not-allowed"
+                : "hover:from-[#1d73b2] hover:to-[#4e9fd1] hover:shadow-lg hover:shadow-[#4e9fd1]/40"
+            }`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
@@ -175,18 +170,24 @@ export default function Dashboard() {
               />
             </svg>
           </button>
-
         </div>
 
-        {/* Collection indicator */}
-        <div className="mt-2 text-xs text-gray-400 flex justify-between">
+        {/* Collection Indicator */}
+        <div className="mt-2 text-xs text-[#6b8299] flex justify-between">
           <span>
             {selected ? `Querying: ${selected}` : "Please select a collection"}
           </span>
-          {message && <span>{message}</span>}
+          {message && (
+            <span
+              className={`${
+                message.includes("failed") ? "text-[#ff9999]" : "text-[#4e9fd1]"
+              }`}
+            >
+              {message}
+            </span>
+          )}
         </div>
       </div>
-
     </div>
   );
 }
