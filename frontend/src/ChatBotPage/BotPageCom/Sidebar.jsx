@@ -39,6 +39,7 @@ export default function Sidebar() {
       // Extract keys from the namespaces object
       const namespaces = response.data.namespaces ? Object.keys(response.data.namespaces) : [];
       console.log(response);
+
       setCollectionName(namespaces); // Set the keys (e.g., ["resume"]) as the collection names
       setcontentLoading(false); // Stop loading once data is fetched
     } catch (e) {
