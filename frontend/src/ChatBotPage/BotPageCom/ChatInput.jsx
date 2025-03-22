@@ -125,18 +125,16 @@ export default function Dashboard() {
           msg.map((m, index) => (
             <div
               key={index}
-              className={`flex ${
-                m.sender === "user" ? "justify-end" : "justify-start"
-              }`}
+              className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"
+                }`}
             >
               <div
-                className={`p-3 rounded-lg max-w-[75%] ${
-                  m.sender === "user"
-                    ? "bg-[#ff8c42] text-white rounded-tr-none"
-                    : m.isError
+                className={`p-3 rounded-lg max-w-[75%] ${m.sender === "user"
+                  ? "bg-[#ff8c42] text-white rounded-tr-none"
+                  : m.isError
                     ? "bg-[#933] text-gray-100 rounded-tl-none"
                     : "bg-[#333] text-gray-100 rounded-tl-none"
-                }`}
+                  }`}
               >
                 {m.loading ? (
                   <div className="flex items-center space-x-2">
@@ -152,14 +150,14 @@ export default function Dashboard() {
       </div>
 
       {/* Query Input */}
-      <div className="p-4 bg-[#242424] border-t border-gray-800 rounded-b-xl">
-        <div className="flex items-center bg-[#2d2d2d] rounded-lg overflow-hidden border border-gray-700 focus-within:border-[#ff8c42] transition-colors">
+      <div className="p-4 bg-[#1f1f1f] border-t border-gray-700 rounded-b-xl">
+        <div className="flex items-center bg-[#333333] rounded-lg overflow-hidden border border-gray-600 focus-within:border-[#ff6b2b] transition-colors">
           <input
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Ask something about your document..."
-            className="flex-1 p-3 bg-transparent text-gray-200 placeholder-gray-500 focus:outline-none"
+            className="flex-1 p-3 bg-transparent text-gray-300 placeholder-gray-400 focus:outline-none"
             onKeyPress={(e) => e.key === "Enter" && !loading && handleQuery()}
           />
 
@@ -167,9 +165,7 @@ export default function Dashboard() {
           <button
             onClick={handleQuery}
             disabled={loading}
-            className={`px-4 py-3 bg-[#ff8c42] text-white transition-all ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#ff7b30]"
-            }`}
+            className={`px-4 py-3 bg-gradient-to-r from-[#4e9fd1] to-[#1d73b2] text-white transition-all ${loading ? "opacity-50 cursor-not-allowed" : "hover:from-[#1d73b2] hover:to-[#4e9fd1]"}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -179,16 +175,18 @@ export default function Dashboard() {
               />
             </svg>
           </button>
+
         </div>
 
         {/* Collection indicator */}
-        <div className="mt-2 text-xs text-gray-500 flex justify-between">
+        <div className="mt-2 text-xs text-gray-400 flex justify-between">
           <span>
             {selected ? `Querying: ${selected}` : "Please select a collection"}
           </span>
           {message && <span>{message}</span>}
         </div>
       </div>
+
     </div>
   );
 }
