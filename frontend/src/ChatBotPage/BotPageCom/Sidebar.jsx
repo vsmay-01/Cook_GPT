@@ -86,7 +86,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="w-72 h-screen bg-[#1e1e1e] p-6 border-r border-[#2d2d2d] flex flex-col relative shadow-md">
+    <div className="w-72 h-screen bg-[#1e1e1e] p-6 border-r border-[#2d2d2d] flex flex-col  shadow-md">
       {/* Sidebar Header */}
       <h2 className="text-lg font-semibold text-gray-100 uppercase tracking-widest pb-4 border-b border-[#2d2d2d]">
         Collections

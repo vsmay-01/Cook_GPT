@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
 import { SelectedCollectionContext } from "../../context/SelectedContext";
+import { ChatResContext } from "../../context/ChatResContext";
 import ChatLoader from './ChatLoader';
 import EmptyPage from './EmptyPage';
 
@@ -12,6 +13,7 @@ export default function Dashboard() {
   const [response, setResponse] = useState(null);
   const [msg, setMsg] = useState([]);
   const { selected } = useContext(SelectedCollectionContext);
+  const { rerankedDocuments ,setRerankedDocuments } = useContext(ChatResContext);
   const { user } = useUser();
   
   // Reference to the chat container for auto-scrolling
@@ -64,14 +66,15 @@ export default function Dashboard() {
           headers: { "Content-Type": "application/json" },
         }
       );
-
-      setResponse(response.data.response);
+    // console.log(response.data.reranked_documents[0].content)
+    setRerankedDocuments(response.data.reranked_documents[0].content);
+      setResponse(response.data.llm_response);
       
       // Replace the loading message with the actual response
       setMsg((prev) => 
         prev.map(item => 
           item.id === loadingMessageId 
-            ? { text: response.data.response, sender: "bot" } 
+            ? { text:response.data.llm_response, sender: "bot" } 
             : item
         )
       );
