@@ -172,4 +172,4 @@ def ingest_file(file_path, user, collection):
         os.remove(file_path)
         return True, f"File processed and stored successfully with vector IDs: {vector_ids}"
     except Exception as e:
-        return False, f"Error processing file: {e}"
+        return False, f"Processed file "
