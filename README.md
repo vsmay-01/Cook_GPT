@@ -107,48 +107,31 @@ Experience Cook GPT in action:
   <table>
     <tr>
       <td align="center">
-        <img src="/api/placeholder/100/100" alt="Team Lead" style="border-radius:50%"/><br />
-        <b>Sarah Johnson</b><br />
-        <i>Project Lead & Full-Stack Developer</i><br />
+        <img src="/CookGPTLogo.webp" alt="Team Lead" style="border-radius:50%" width="15"/>
+        <b>Hetharth Sachdeva</b><br />
+        <i>Project Lead & Full-Stack Developer(AI/ML)</i><br />
         <a href="https://github.com/sarahjohnson">GitHub</a> • 
         <a href="https://linkedin.com/in/sarahjohnson">LinkedIn</a>
       </td>
       <td align="center">
-        <img src="/api/placeholder/100/100" alt="Frontend Developer" style="border-radius:50%"/><br />
-        <b>Miguel Santos</b><br />
-        <i>Frontend Developer & UI/UX Designer</i><br />
-        <a href="https://github.com/miguelsantos">GitHub</a> • 
-        <a href="https://linkedin.com/in/miguelsantos">LinkedIn</a>
-      </td>
-      <td align="center">
-        <img src="/api/placeholder/100/100" alt="Backend Developer" style="border-radius:50%"/><br />
-        <b>Aisha Patel</b><br />
-        <i>Backend Developer & AI Specialist</i><br />
-        <a href="https://github.com/aishapatel">GitHub</a> • 
-        <a href="https://linkedin.com/in/aishapatel">LinkedIn</a>
-      </td>
-    </tr>
-    <tr>
-      <td align="center">
-        <img src="/api/placeholder/100/100" alt="Data Scientist" style="border-radius:50%"/><br />
-        <b>David Kim</b><br />
-        <i>Data Scientist & Algorithm Engineer</i><br />
+        <img src="/CookGPTLogo.webp" alt="Data Scientist" width="15" style="border-radius:50%"/>
+        <b>Prince Kumar</b><br />
+        <i>Full-Stack Developer</i><br />
         <a href="https://github.com/davidkim">GitHub</a> • 
         <a href="https://linkedin.com/in/davidkim">LinkedIn</a>
       </td>
-      <td align="center">
-        <img src="/api/placeholder/100/100" alt="DevOps Engineer" style="border-radius:50%"/><br />
-        <b>Elena Rodriguez</b><br />
-        <i>DevOps & Cloud Infrastructure</i><br />
-        <a href="https://github.com/elenarodriguez">GitHub</a> • 
-        <a href="https://linkedin.com/in/elenarodriguez">LinkedIn</a>
-      </td>
-      <td align="center">
-        <img src="/api/placeholder/100/100" alt="QA Engineer" style="border-radius:50%"/><br />
-        <b>Thomas Weber</b><br />
-        <i>QA & Testing Engineer</i><br />
-        <a href="https://github.com/thomasweber">GitHub</a> • 
-        <a href="https://linkedin.com/in/thomasweber">LinkedIn</a>
+      </tr>  <td align="center">
+        <img src="/CookGPTLogo.webp" alt="Data Scientist" width="15" style="border-radius:50%"/>
+        <b>Vedant Dubey</b><br />
+        <i>Full-Stack Developer</i><br />
+        <a href="https://github.com/davidkim">GitHub</a> • 
+        <a href="https://linkedin.com/in/davidkim">LinkedIn</a>
+      </td>  <td align="center">
+        <img src="/CookGPTLogo.webp" alt="Data Scientist" width="15" style="border-radius:50%"/>
+        <b>Mayank Verma</b><br />
+        <i>Full-Stack Developer</i><br />
+        <a href="https://github.com/davidkim">GitHub</a> • 
+        <a href="https://linkedin.com/in/davidkim">LinkedIn</a>
       </td>
     </tr>
   </table>
@@ -159,12 +142,15 @@ Experience Cook GPT in action:
 ## 📱 Application Showcase
 
 <div align="center">
-  <div style="display: flex; justify-content: space-between;">
-    <img src="/api/placeholder/250/500" alt="Mobile App Home" />
-    <img src="/api/placeholder/250/500" alt="Recipe Details" />
-    <img src="/api/placeholder/250/500" alt="Meal Planning" />
-  </div>
+  <div style="display: flex; justify-content: space-around; gap: 4; ">
+    <img src="/applicationOverview/application.png" alt="Mobile App Home" width="100"/>
+    <img src="/applicationOverview/application2.png" alt="Mobile App Home" width="100"/>
+    <img src="/applicationOverview/application3.png" alt="Mobile App Home" width="100"/>
+    <img src="/applicationOverview/application4.png" alt="Mobile App Home" width="100"/>
+     </div>
+  <div align="center">
   <p><i>Cook GPT mobile application interfaces</i></p>
+  </div>
 </div>
 
 ---
@@ -172,16 +158,13 @@ Experience Cook GPT in action:
 ## 🗺️ Roadmap
 
 <div align="center">
-  <img src="/api/placeholder/700/200" alt="Project Roadmap" />
+  <img src="./robo.jpg" width="30" alt="Project Roadmap" />
+  <h4>Discover Yourself 
 </div>
 
 ### Upcoming Features
 
-- 🌈 **AR Cooking Assistant**: Visualize cooking steps in augmented reality
-- 🤖 **Smart Kitchen Integration**: Connect with IoT kitchen devices
-- 🥘 **Cultural Cuisine Expansion**: Expanding our recipe database with authentic regional cuisines
-- 💬 **Community Features**: Recipe sharing, ratings, and community challenges
-- 🎓 **Cooking Classes**: Live and interactive virtual cooking sessions
+- <b>Upcoming .........
 
 ---
 
@@ -286,7 +269,6 @@ Ensure the following are installed on your system:
    ```
    FLASK_APP=app.py
    FLASK_ENV=development
-   API_KEY=your_openai_api_key
    GOOGLE_VISION_API_KEY=your_google_vision_api_key
    DATABASE_URL=your_mongodb_url
    JWT_SECRET=your_jwt_secret
@@ -295,7 +277,7 @@ Ensure the following are installed on your system:
 5. **Run the Backend Server**:
    Start the Flask development server:
    ```bash
-   flask run
+   python app.py
    ```
 
 6. **Test the API**:
@@ -303,7 +285,7 @@ Ensure the following are installed on your system:
 
 ---
 
-By following these steps, you will have the backend of Cook GPT up and running, ready to handle requests and power the AI-driven cooking assistant.
+By following these steps, you will have the backend of Cook GPT up and running, ready to handle requests and power your Serching .
 
 
 
@@ -328,32 +310,30 @@ Please read our [Contribution Guidelines](CONTRIBUTING.md) for details on our co
 <div align="center">
   <table>
     <tr>
-      <td align="center"><img src="/api/placeholder/60/60" alt="Best Food Tech" /> <br/><b>Best Food Tech Innovation 2023</b></td>
-      <td align="center"><img src="/api/placeholder/60/60" alt="AI Excellence" /> <br/><b>AI Excellence Award</b></td>
-      <td align="center"><img src="/api/placeholder/60/60" alt="User Experience" /> <br/><b>Outstanding User Experience</b></td>
-    </tr>
+      <td align="center"><img src="/IIIT.jpg" alt="Hack-O-Harbor Winner" /> <br/><b>WINNER🎉</b></br>HACK-O-HARBOUR</td>
   </table>
 </div>
 
 ---
-
+<!-- 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details. -->
 
 ---
 
 ## 📞 Contact & Support
 
-- **Email**: team@cookgpt.ai
-- **Twitter**: [@CookGPT](https://twitter.com/cookgpt)
-- **Discord**: [Join our community](https://discord.gg/cookgpt)
-- **Support**: [Help Center](https://support.cookgpt.ai)
+- **Email**: hetharthsach@gmail.com(Team Leader)
+- **Twitter**: [@CookGPT]()
+- **Support**: [+919818248015]
 
 ---
 
 <div align="center">
-  <img src="/api/placeholder/100/100" alt="Cook GPT Logo" />
+  <img src="/CookGPTLogo.webp" alt="Cook GPT Logo" width="50" style="border-radius:50%" height=''/>
   <h3>Cook GPT - Cooking Reimagined with AI</h3>
   <p>Made with ❤️ by Team Cookers</p>
 </div>
+![alt text](image.png)
+---
