@@ -306,14 +306,13 @@ Please read our [Contribution Guidelines](CONTRIBUTING.md) for details on our co
 
 ---
 
-## 🏆 Awards & Recognition
 
-<div align="center">
+<!-- <div align="center">
   <table>
     <tr>
       <td align="center"><img src="/IIIT.jpg" alt="Hack-O-Harbor Winner" /> <br/><b>WINNER🎉</b></br>HACK-O-HARBOUR</td>
   </table>
-</div>
+</div> -->
 
 ---
 <!-- 
@@ -321,15 +320,7 @@ Please read our [Contribution Guidelines](CONTRIBUTING.md) for details on our co
 
 This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details. -->
 
----
 
-## 📞 Contact & Support
-
-- **Email**: hetharthsach@gmail.com(Team Leader)
-- **Twitter**: [@CookGPT]()
-- **Support**: [+919818248015]
-
----
 
 <!-- <div align="center">
   <img src="/CookGPTLogo.webp" alt="Cook GPT Logo" width="50" style="border-radius:50%" height=''/>
