@@ -331,9 +331,9 @@ This project is licensed under the [MIT License](LICENSE) - see the LICENSE file
 
 ---
 
-<div align="center">
+<!-- <div align="center">
   <img src="/CookGPTLogo.webp" alt="Cook GPT Logo" width="50" style="border-radius:50%" height=''/>
   <h3>Cook GPT - Cooking Reimagined with AI</h3>
   <p>Made with ❤️ by Team Cookers</p>
-</div>
+</div> -->
 ![alt text](image.png)
