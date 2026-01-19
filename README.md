@@ -1,5 +1,5 @@
 
-# <img src="/robo.jpg" alt="Cook GPT Logo" width="100" height="100" /> Cook GPT - Your AI-Powered Cooking Assistant
+# <img src="/robo.jpg" alt="Cook GPT Logo" width="100" height="100" /> Cook GPT - Your RAG - Based Multimodal Chat Assistant
 
 <div align="center">
   
