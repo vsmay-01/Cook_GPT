@@ -1,19 +1,6 @@
 
 # <img src="/robo.jpg" alt="Cook GPT Logo" width="100" height="100" /> Cook GPT - Your RAG Based Multimodal Chat Assistant
 
-<div align="center">
-  
-  ![GitHub stars](https://img.shields.io/github/stars/team-cookers/Cook_GPT?style=for-the-badge)
-  ![GitHub forks](https://img.shields.io/github/forks/team-cookers/Cook_GPT?style=for-the-badge)
-  ![GitHub issues](https://img.shields.io/github/issues/team-cookers/Cook_GPT?style=for-the-badge)
-  ![GitHub license](https://img.shields.io/github/license/team-cookers/Cook_GPT?style=for-the-badge)
-  
-  <h3>Transform your cooking experience with the power of AI</h3>
-  
-  [Features](#-features) • [Live Demo](#-live-demo) • [Installation](#%EF%B8%8F-installation) • [Team](#-meet-the-team) • [Roadmap](#-roadmap) • [Contributing](#-contributing)
-  
-</div>
-
 ---
 
 ## 📋 Overview
