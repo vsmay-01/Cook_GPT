@@ -65,10 +65,10 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
 
 <div align="center">
   <div style="display: flex; justify-content: space-around; gap: 4; ">
-    <img src="/applicationOverview/application.png" alt="Mobile App Home" width="100"/>
-    <img src="/applicationOverview/application2.png" alt="Mobile App Home" width="100"/>
-    <img src="/applicationOverview/application3.png" alt="Mobile App Home" width="100"/>
-    <img src="/applicationOverview/application4.png" alt="Mobile App Home" width="100"/>
+    <img src="/applicationOverview/application.png" alt="Mobile App Home" width="25%"/>
+    <img src="/applicationOverview/application2.png" alt="Mobile App Home" width="25%"/>
+    <img src="/applicationOverview/application3.png" alt="Mobile App Home" width="25%"/>
+    <img src="/applicationOverview/application4.png" alt="Mobile App Home" width="25%"/>
      </div>
   <div align="center">
   <p><i>Cook GPT mobile application interfaces</i></p>
@@ -120,14 +120,14 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
   <table>
     <tr>
       <td align="center">
-        <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/>
+        <!-- <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/> -->
         <b>Hetharth Sachdeva</b><br/>
         <i>Project Lead & Python Developer (AI/ML)</i><br/>
         <a href="https://github.com/HetharthSachdeva">GitHub</a> • 
         <a href="https://www.linkedin.com/in/hetharth-sachdeva/">LinkedIn</a>
       </td>
       <td align="center">
-        <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/>
+        <!-- <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/> -->
         <b>Prince Kumar</b><br/>
         <i>Full-Stack Developer</i><br/>
         <a href="https://github.com/prince04kumar">GitHub</a> • 
@@ -136,14 +136,14 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
     </tr>
     <tr>
       <td align="center">
-        <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/>
+        <!-- <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/> -->
         <b>Vedant Dubey</b><br/>
         <i>Python Developer</i><br/>
         <a href="https://github.com/vedantDube">GitHub</a> • 
         <a href="https://www.linkedin.com/in/vedant-dubey-55a934287/">LinkedIn</a>
       </td>
       <td align="center">
-        <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/>
+        <!-- <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/> -->
         <b>Mayank Verma</b><br/>
         <i>Frontend Developer</i><br/>
         <a href="https://github.com/vsmay-01">GitHub</a> • 
