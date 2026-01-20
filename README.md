@@ -1,5 +1,6 @@
 # 🚀 COOKGPT — Multimodal RAG Chatbot  
 ### 🥇 Winner – 1st Place, IIIT Naya Raipur Hackathon Hack-o-Harbour 2025
+### Team - UnknownCookError (based on the infamous Unreal Engine Error)
 
 COOKGPT is a **multimodal Retrieval-Augmented Generation (RAG) chatbot** built to ingest, index, and query information from **diverse data sources**—including documents, structured files, audio, and web links—while maintaining **retrieval transparency, explainability, and reliability**.
 
@@ -71,7 +72,7 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
     <img src="/applicationOverview/application2.png" alt="Mobile App Home" width="100%"/>
      </div>
   <div align="center">
-  <p><i>Cook GPT mobile application interfaces</i></p>
+  <p><i>Cook GPT web application interfaces</i></p>
   </div>
 </div>
 
@@ -137,19 +138,20 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
     <tr>
       <td align="center">
         <!-- <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/> -->
+          <b>Mayank Verma</b><br/>
+          <i>Frontend Developer</i><br/>
+          <a href="https://github.com/vsmay-01">GitHub</a> • 
+          <a href="https://www.linkedin.com/in/mayank-verma-723b62297/">LinkedIn</a>
+      </td>
+      <td align="center">
         <b>Vedant Dubey</b><br/>
         <i>Python Developer</i><br/>
         <a href="https://github.com/vedantDube">GitHub</a> • 
         <a href="https://www.linkedin.com/in/vedant-dubey-55a934287/">LinkedIn</a>
       </td>
-      <td align="center">
-        <!-- <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/> -->
-        <b>Mayank Verma</b><br/>
-        <i>Frontend Developer</i><br/>
-        <a href="https://github.com/vsmay-01">GitHub</a> • 
-        <a href="https://www.linkedin.com/in/mayank-verma-723b62297/">LinkedIn</a>
-      </td>
-    </tr>
+    </tr> 
+        
+      
   </table>
 </div>
 
