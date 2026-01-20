@@ -18,21 +18,22 @@ const ProfileSec = () => {
   }, [rerankedDocuments]);
 
   return (
-    <div className="fixed top-4 right-4 z-50 bg-[#1A1A1A]/80 backdrop-blur-md p-3 rounded-lg shadow-lg border border-[#3B82F6]/50 w-[85%] sm:w-[300px] md:w-[350px] max-h-[80vh] overflow-hidden">
-      {/* Profile Icon Section */}
-      <div className="absolute top-2 right-2 z-60 flex justify-end">
-        <SignedOut>
-          <SignInButton>
+    <div className="fixed top-4 right-4 z-[60]">
+      <SignedOut>
+        <SignInButton>
+          <button className="p-2 rounded-full bg-[#1A1A1A]/80 backdrop-blur-md border border-[#3B82F6]/40 hover:border-[#3B82F6] transition">
             <FaUserCircle
               size={28}
-              className="text-gray-300 hover:text-[#3B82F6] transition-all cursor-pointer"
+              className="text-gray-300 hover:text-[#3B82F6]"
             />
-          </SignInButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </div>
+          </button>
+        </SignInButton>
+      </SignedOut>
+    
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
+    </div>
 
      {/* Reranked Documents Section */}
       {/* <SignedIn> */}
@@ -53,7 +54,7 @@ const ProfileSec = () => {
           {/* </div> */}
         {/* </div> */}
       {/* </SignedIn>  */}
-    </div>
+    /*</div>*/
   );
 };
 
