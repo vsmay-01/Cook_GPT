@@ -123,7 +123,7 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
       <td align="center">
         <!-- <img src="/CookGPTLogo.webp" style="border-radius:50%" width="70"/> -->
         <b>Hetharth Sachdeva</b><br/>
-        <i>Project Lead & Python Developer (AI/ML)</i><br/>
+        <i>Project Lead & Python Developer</i><br/>
         <a href="https://github.com/HetharthSachdeva">GitHub</a> • 
         <a href="https://www.linkedin.com/in/hetharth-sachdeva/">LinkedIn</a>
       </td>
