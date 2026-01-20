@@ -67,7 +67,7 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
   <div style="display: flex; justify-content: space-around; gap: 4; ">
     <img src="/applicationOverview/application3.png" alt="Mobile App Home" width="100%"/>
     <img src="/applicationOverview/application4.png" alt="Mobile App Home" width="100%"/>
-    <img src="/applicationOverview/application1.png" alt="Mobile App Home" width="100%"/>
+    <img src="/applicationOverview/application.png" alt="Mobile App Home" width="100%"/>
     <img src="/applicationOverview/application2.png" alt="Mobile App Home" width="100%"/>
      </div>
   <div align="center">
@@ -163,7 +163,7 @@ COOKGPT was designed to directly map these requirements into a **robust, end-to-
 ---
 
 <div align="center">
-  <img src="/CookGPTLogo.webp" alt="Cook GPT Logo" width="50" style="border-radius:50%" height=''/>
+  <img src="/IIIT.jpg" alt="Cook GPT Logo" width="100%" style="border-radius:50%" />
   <h3>Cook GPT</h3>
   <p>Made with ❤️ by Team UnknownCookError</p>
 </div>
