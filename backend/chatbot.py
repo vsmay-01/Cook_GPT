@@ -11,7 +11,7 @@ load_dotenv()
 
 chat_history = {}
 
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama3-8b-8192")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
 MAX_RETRIEVER_K = 2
 MAX_DOCS_FOR_CONTEXT = 2
