@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from chatbot import * 
 from ingestion import * 
 from pinecone_utils import *  
+from utils import sanitize_index_name
 from flask_cors import CORS  
 import logging
 
@@ -14,6 +15,15 @@ logger = logging.getLogger(__name__)  # Create logger
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 load_dotenv()
+os.makedirs("uploads", exist_ok=True)
+
+@app.route("/", methods=["GET"])
+def home():
+    """Health check endpoint."""
+    return jsonify({
+        "status": "ok",
+        "message": "Cook GPT API is running"
+    })
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
@@ -32,16 +42,29 @@ def upload_file():
         return jsonify({"error": "No selected file"}), 400
     
     file_path = os.path.join("uploads", file.filename)
-    file.save(file_path)
-    
-    # Ensure user has a Pinecone index
-    create_pinecone_index(user)
-    
-    success, message = ingest_file(file_path, user, collection)
-    if not success:
-        return jsonify({"error": message}), 500
-    
-    return jsonify({"message": "File processed and stored successfully"})
+    try:
+        file.save(file_path)
+
+        # Ensure user has a Pinecone index and ingest file
+        try:
+            create_pinecone_index(user)
+            success, message = ingest_file(file_path, user, collection)
+            if not success:
+                logger.error(f"Ingestion failed: {message}")
+                return jsonify({"error": message}), 500
+            return jsonify({"message": "File processed and stored successfully", "vector_ids": message}), 200
+        except Exception as e:
+            logger.exception("Error during index creation or ingestion")
+            # attempt to remove the uploaded file on failure
+            try:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            except Exception:
+                pass
+            return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        logger.exception("Failed to save uploaded file")
+        return jsonify({"error": f"Failed to save file: {e}"}), 500
 
 @app.route("/query", methods=["POST"])
 def query():
@@ -59,7 +82,8 @@ def query():
     
     try:
         logger.debug(f"Querying Pinecone with user: {user}, collection: {collection}, query: {query_text}")
-        response = query_pinecone(query_text, f'{user}-index', collection)
+        index_name = sanitize_index_name(user)
+        response = query_pinecone(query_text, index_name, collection)
         logger.debug(f"Query response: {response}")
         return jsonify(response)  # Return detailed response
     except Exception as e:
@@ -75,9 +99,10 @@ def get_index_info():
 
     try:
         index_info = get_pinecone_index_info(user)
-        return jsonify(index_info)
+        # Return a plain dict; Flask will convert it to JSON response.
+        return index_info, 200
     except Exception as e:
-        print(f"Error fetching index info: {e}")
+        logger.exception("Error fetching index info")
         return jsonify({"error": str(e)}), 500
 
 @app.route("/delete", methods=["POST"])

@@ -1,37 +1,94 @@
 import os
-import speech_recognition as sr
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, CSVLoader
 from langchain_text_splitters import CharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
-from langchain.schema import Document
+from langchain_core.documents import Document
 from pinecone import Pinecone, ServerlessSpec
 from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
 import io
 import uuid
+import time
+import os
 
 load_dotenv()
 
 # Initialize Pinecone
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+try:
+    pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+except Exception as e:
+    print(f"Warning: Could not initialize Pinecone: {e}")
+    pc = None
+
+from utils import sanitize_index_name
+
 
 def create_pinecone_index(user):
-    """Create a new Pinecone index for the user if it doesn't exist."""
-    index_name = f"{user}-index"
+    if pc is None:
+        raise RuntimeError("Pinecone client not initialized. Set PINECONE_API_KEY in your .env.")
+
+    name = sanitize_index_name(user)
+
+    existing_indexes = []
     try:
         existing_indexes = pc.list_indexes().names()
-        if index_name not in existing_indexes:
-            pc.create_index(
-                name=index_name,
-                dimension=768,
-                metric="euclidean",
-                spec=ServerlessSpec(cloud="aws", region="us-east-1")
-            )
-    except Exception as e:
-        print(f"Error creating Pinecone index: {e}")
+    except Exception:
+        existing_indexes = []
+
+    if name not in existing_indexes:
+        print(f"Creating Pinecone index '{name}'...")
+        pc.create_index(
+            name=name,
+            dimension=384,
+            metric="cosine",
+            spec=ServerlessSpec(cloud="aws", region="us-east-1")
+        )
+
+    # wait until index is ready (with timeout to prevent hanging)
+    max_wait = 60  # seconds
+    waited = 0
+    interval = 1
+    ready = False
+    
+    while waited < max_wait:
+        try:
+            desc = pc.describe_index(name)
+            
+            # Handle different status formats from Pinecone SDK
+            if desc is None:
+                ready = False
+            else:
+                status_attr = getattr(desc, "status", None)
+                if isinstance(status_attr, dict):
+                    ready = bool(status_attr.get("ready", False))
+                elif hasattr(status_attr, "get"):
+                    # dict-like object
+                    ready = bool(status_attr.get("ready", False))
+                elif hasattr(status_attr, "ready"):
+                    # object with ready attribute
+                    ready = bool(getattr(status_attr, "ready", False))
+                else:
+                    # fallback: assume not ready
+                    ready = False
+            
+            if ready:
+                print(f"Index '{name}' is ready")
+                break
+                
+        except Exception as e:
+            print(f"Warning: error checking index status: {e}")
+            ready = False
+        
+        time.sleep(interval)
+        waited += interval
+    
+    if not ready:
+        raise TimeoutError(f"Pinecone index '{name}' not ready after {max_wait} seconds")
+    
+    return name
 
 
 def extract_images_from_pdf(pdf_path, output_folder="extracted_images"):
@@ -48,9 +105,14 @@ def extract_images_from_pdf(pdf_path, output_folder="extracted_images"):
     return image_paths
 
 def extract_text_from_image(image_path):
-    """Extract text from an image using OCR."""
-    image = Image.open(image_path)
-    return pytesseract.image_to_string(image)
+    """Extract text from an image using OCR. Returns empty string if tesseract unavailable."""
+    try:
+        image = Image.open(image_path)
+        return pytesseract.image_to_string(image)
+    except Exception as e:
+        print(f"Warning: Could not extract text from image (tesseract may not be installed): {e}")
+        # Return a note instead of failing completely
+        return f"[Image: {os.path.basename(image_path)} - OCR unavailable]"
 
 def load_document(file_path):
     """Load a document from file."""
@@ -78,11 +140,15 @@ def load_document(file_path):
 def transcribe_audio(file_path):
     """Transcribe audio file into text using SpeechRecognition."""
     try:
+        import speech_recognition as sr
         recognizer = sr.Recognizer()
         with sr.AudioFile(file_path) as source:
             audio = recognizer.record(source)
         text = recognizer.recognize_google(audio)
         return [Document(page_content=text)]
+    except ImportError:
+        print("speech_recognition module not available. Please install it to enable audio transcription.")
+        return []
     except Exception as e:
         print(f"Error transcribing audio: {e}")
         return []
@@ -97,11 +163,10 @@ def split_text(document, chunk_size=1000, chunk_overlap=100):
         return []
 
 def create_embeddings():
-    """Create an embedding model."""
+    """Create an embedding model. Uses local Hugging Face embeddings for better performance."""
     try:
-        return GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004", 
-            google_api_key=os.getenv("GOOGLE_API_KEY")
+        return HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
         )
     except Exception as e:
         print(f"Error creating embeddings: {e}")
@@ -109,7 +174,7 @@ def create_embeddings():
 
 def store_embeddings(texts, embeddings, user, collection, file_path):
     """Store embeddings in Pinecone with filename and unique ID in metadata."""
-    index_name = f"{user}-index"
+    index_name = sanitize_index_name(user)
     try:
         # Add filename and unique ID to metadata for each document
         for doc in texts:
@@ -172,4 +237,5 @@ def ingest_file(file_path, user, collection):
         os.remove(file_path)
         return True, f"File processed and stored successfully with vector IDs: {vector_ids}"
     except Exception as e:
-        return False, f"Processed file "
+        print(f"Error ingesting file: {e}")
+        return False, f"Error ingesting file: {e}"
