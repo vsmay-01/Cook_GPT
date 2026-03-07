@@ -1,7 +1,11 @@
 import os
+import sys
+import tempfile
+import time
+import uuid
 from dotenv import load_dotenv
-from langchain_community.document_loaders import PyPDFLoader, TextLoader, CSVLoader
-from langchain_text_splitters import CharacterTextSplitter
+from langchain_community.document_loaders import CSVLoader, PyPDFLoader, TextLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.documents import Document
@@ -9,10 +13,6 @@ from pinecone import Pinecone, ServerlessSpec
 from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
-import io
-import uuid
-import time
-import os
 
 load_dotenv()
 TESSERACT_CMD = os.getenv("TESSERACT_CMD", "").strip()
@@ -40,6 +40,24 @@ from utils import sanitize_index_name
 
 OCR_UNAVAILABLE_MARKER = "OCR unavailable"
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
+TEXT_EXTENSIONS = (".txt",)
+CSV_EXTENSIONS = (".csv",)
+NATIVE_AUDIO_EXTENSIONS = (".wav", ".aiff", ".aif", ".flac")
+AUDIO_EXTENSIONS = NATIVE_AUDIO_EXTENSIONS + (".mp3", ".m4a", ".aac", ".ogg", ".wma")
+VIDEO_EXTENSIONS = (".mp4", ".mov", ".avi", ".mkv", ".webm", ".m4v")
+SUPPORTED_EXTENSIONS = (
+    (".pdf",)
+    + TEXT_EXTENSIONS
+    + CSV_EXTENSIONS
+    + IMAGE_EXTENSIONS
+    + AUDIO_EXTENSIONS
+    + VIDEO_EXTENSIONS
+)
+MEDIA_EXTENSIONS = AUDIO_EXTENSIONS + VIDEO_EXTENSIONS
+
+
+class IngestionError(Exception):
+    """Raised when a file cannot be converted into indexable documents."""
 
 
 def create_pinecone_index(user):
@@ -134,53 +152,204 @@ def extract_text_from_image(image_path):
         # Return empty content so we don't index non-informational placeholders.
         return ""
 
+
+def get_supported_extensions():
+    return SUPPORTED_EXTENSIONS
+
+
+def is_supported_file(file_path):
+    return os.path.splitext(file_path)[1].lower() in SUPPORTED_EXTENSIONS
+
+
+def convert_media_to_wav(file_path, is_video=False):
+    """Convert non-native audio/video files to a temporary wav file for transcription."""
+    clip = None
+    audio_clip = None
+    temp_wav_path = None
+    try:
+        if is_video:
+            from moviepy.video.io.VideoFileClip import VideoFileClip
+
+            clip = VideoFileClip(file_path)
+            audio_clip = clip.audio
+        else:
+            from moviepy.audio.io.AudioFileClip import AudioFileClip
+
+            audio_clip = AudioFileClip(file_path)
+
+        if audio_clip is None:
+            raise ValueError("No audio track found in media file")
+
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_wav:
+            temp_wav_path = temp_wav.name
+
+        audio_clip.write_audiofile(temp_wav_path, logger=None)
+        return temp_wav_path
+    except ImportError as e:
+        if temp_wav_path and os.path.exists(temp_wav_path):
+            os.remove(temp_wav_path)
+        raise RuntimeError(
+            "moviepy is required to process this audio/video format. "
+            "Install backend dependencies again after updating requirements."
+        ) from e
+    except Exception:
+        if temp_wav_path and os.path.exists(temp_wav_path):
+            os.remove(temp_wav_path)
+        raise
+    finally:
+        if audio_clip is not None:
+            audio_clip.close()
+        if clip is not None:
+            clip.close()
+
 def load_document(file_path):
     """Load a document from file."""
-    try:
-        if file_path.endswith(".pdf"):
-            loader = PyPDFLoader(file_path)
-            text_data = loader.load()
-            image_paths = extract_images_from_pdf(file_path)
-            return text_data, image_paths
-        elif file_path.endswith(".txt"):
-            loader = TextLoader(file_path)
-        elif file_path.endswith(".csv"):
-            loader = CSVLoader(file_path)
-        elif file_path.endswith((".mp3", ".wav")):
-            return transcribe_audio(file_path), []
-        elif file_path.endswith(IMAGE_EXTENSIONS):
-            return [Document(page_content=extract_text_from_image(file_path))], []
-        else:
-            raise ValueError("Unsupported file format")
+    normalized_path = file_path.lower()
+    if normalized_path.endswith(".pdf"):
+        loader = PyPDFLoader(file_path)
+        text_data = loader.load()
+        image_paths = extract_images_from_pdf(file_path)
+        return text_data, image_paths
+    if normalized_path.endswith(TEXT_EXTENSIONS):
+        loader = TextLoader(file_path)
         return loader.load(), []
-    except Exception as e:
-        print(f"Error loading document: {e}")
-        return [], []
+    if normalized_path.endswith(CSV_EXTENSIONS):
+        loader = CSVLoader(file_path)
+        return loader.load(), []
+    if normalized_path.endswith(AUDIO_EXTENSIONS):
+        return transcribe_audio(file_path), []
+    if normalized_path.endswith(VIDEO_EXTENSIONS):
+        return transcribe_video(file_path), []
+    if normalized_path.endswith(IMAGE_EXTENSIONS):
+        return [Document(page_content=extract_text_from_image(file_path))], []
+    raise IngestionError(
+        f"Unsupported file format. Supported types: {', '.join(SUPPORTED_EXTENSIONS)}"
+    )
+
+
+def merge_documents(documents, max_chars=3000, metadata_factory=None):
+    """Merge small documents into larger context windows."""
+    merged_documents = []
+    current_parts = []
+    current_length = 0
+
+    for index, doc in enumerate(documents):
+        content = getattr(doc, "page_content", "").strip()
+        if not content:
+            continue
+
+        projected_length = current_length + len(content) + (2 if current_parts else 0)
+        if current_parts and projected_length > max_chars:
+            merged_content = "\n\n".join(current_parts)
+            metadata = metadata_factory(len(merged_documents), index - 1) if metadata_factory else {}
+            merged_documents.append(Document(page_content=merged_content, metadata=metadata))
+            current_parts = []
+            current_length = 0
+
+        current_parts.append(content)
+        current_length += len(content) + (2 if current_parts else 0)
+
+    if current_parts:
+        metadata = metadata_factory(len(merged_documents), len(documents) - 1) if metadata_factory else {}
+        merged_documents.append(Document(page_content="\n\n".join(current_parts), metadata=metadata))
+
+    return merged_documents
 
 def transcribe_audio(file_path):
     """Transcribe audio file into text using SpeechRecognition."""
+    temp_wav_path = None
     try:
         import speech_recognition as sr
+
+        normalized_path = file_path.lower()
+        source_path = file_path
+        if not normalized_path.endswith(NATIVE_AUDIO_EXTENSIONS):
+            temp_wav_path = convert_media_to_wav(file_path, is_video=False)
+            source_path = temp_wav_path
+
         recognizer = sr.Recognizer()
-        with sr.AudioFile(file_path) as source:
+        with sr.AudioFile(source_path) as source:
             audio = recognizer.record(source)
         text = recognizer.recognize_google(audio)
-        return [Document(page_content=text)]
+        return [
+            Document(
+                page_content=text,
+                metadata={"type": "audio", "source": os.path.basename(file_path)},
+            )
+        ]
     except ImportError:
-        print("speech_recognition module not available. Please install it to enable audio transcription.")
-        return []
+        raise IngestionError(
+            "speech_recognition is not available in the Python environment running the backend. "
+            f"Current interpreter: {sys.executable}. "
+            "Install it in that same environment with `python -m pip install SpeechRecognition`."
+        )
+    except sr.UnknownValueError as e:
+        raise IngestionError(
+            "SpeechRecognition could not detect intelligible speech in the audio track. "
+            "Verify the file contains clear spoken audio."
+        ) from e
+    except sr.RequestError as e:
+        raise IngestionError(
+            "SpeechRecognition could not reach the transcription service. "
+            f"Details: {e}"
+        ) from e
     except Exception as e:
-        print(f"Error transcribing audio: {e}")
-        return []
+        error_detail = str(e).strip() or e.__class__.__name__
+        raise IngestionError(f"Error transcribing audio: {error_detail}") from e
+    finally:
+        if temp_wav_path and os.path.exists(temp_wav_path):
+            os.remove(temp_wav_path)
+
+
+def transcribe_video(file_path):
+    """Extract audio from a video file and transcribe it."""
+    temp_wav_path = None
+    try:
+        temp_wav_path = convert_media_to_wav(file_path, is_video=True)
+        documents = transcribe_audio(temp_wav_path)
+        for document in documents:
+            document.metadata["type"] = "video"
+            document.metadata["source"] = os.path.basename(file_path)
+        return documents
+    except Exception as e:
+        error_detail = str(e).strip() or e.__class__.__name__
+        raise IngestionError(f"Error transcribing video: {error_detail}") from e
+    finally:
+        if temp_wav_path and os.path.exists(temp_wav_path):
+            os.remove(temp_wav_path)
 
 def split_text(document, chunk_size=1000, chunk_overlap=100):
     """Split document into smaller chunks."""
     try:
-        text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            separators=["\n\n", "\n", ". ", " ", ""],
+        )
         return text_splitter.split_documents(document)
     except Exception as e:
         print(f"Error splitting text: {e}")
         return []
+
+
+def prepare_documents_for_embedding(file_path, documents):
+    """Choose chunking strategy based on file type so more context survives retrieval."""
+    normalized_path = file_path.lower()
+
+    if normalized_path.endswith(IMAGE_EXTENSIONS):
+        return documents
+
+    if normalized_path.endswith(CSV_EXTENSIONS):
+        return merge_documents(
+            documents,
+            max_chars=4000,
+            metadata_factory=lambda block_index, _: {"type": "csv", "block_index": block_index},
+        )
+
+    if normalized_path.endswith(MEDIA_EXTENSIONS):
+        return split_text(documents, chunk_size=2200, chunk_overlap=300)
+
+    return split_text(documents, chunk_size=1200, chunk_overlap=150)
 
 def create_embeddings():
     """Create an embedding model. Uses local Hugging Face embeddings for better performance."""
@@ -221,12 +390,21 @@ def ingest_file(file_path, user, collection):
         create_pinecone_index(user)
 
         # Process file
-        document, image_paths = load_document(file_path)
+        try:
+            document, image_paths = load_document(file_path)
+        except IngestionError as e:
+            return False, str(e)
+        except Exception as e:
+            return False, f"Failed to load document: {e}"
+
         if not document:
-            return False, "Failed to load document"
+            return False, (
+                "No readable content was extracted from the file. "
+                "For audio/video uploads, verify transcription dependencies are installed and the file contains speech."
+            )
 
         is_image_upload = file_path.lower().endswith(IMAGE_EXTENSIONS)
-        texts = document if is_image_upload else split_text(document)
+        texts = prepare_documents_for_embedding(file_path, document)
         # Keep only meaningful chunks; avoid indexing empty/noise text.
         texts = [
             doc for doc in texts
