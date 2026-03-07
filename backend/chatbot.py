@@ -13,9 +13,13 @@ chat_history = {}
 
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
-MAX_RETRIEVER_K = 2
-MAX_DOCS_FOR_CONTEXT = 2
+MAX_RETRIEVER_K = 6
+MAX_DOCS_FOR_CONTEXT = 4
 MAX_CHARS_PER_DOC = 1000
+NON_INFORMATIVE_MARKERS = [
+    "ocr unavailable",
+    "image:",
+]
 
 # ✅ ONE embedding model for EVERYTHING
 EMBEDDINGS = HuggingFaceEmbeddings(
@@ -43,13 +47,34 @@ def query_pinecone(query_text, user_index, collection_name):
         k=MAX_RETRIEVER_K
     )
 
-    docs_with_score.sort(key=lambda x: x[1])
+    # Pinecone similarity scores are higher for better matches (cosine metric),
+    # so we sort descending to keep the most relevant chunks first.
+    docs_with_score.sort(key=lambda x: x[1], reverse=True)
     docs = [doc for doc, _ in docs_with_score]
+    # Ignore retrieval hits that are just OCR failure placeholders or empty text.
+    docs = [
+        doc for doc in docs
+        if doc.page_content.strip()
+        and not any(marker in doc.page_content.lower() for marker in NON_INFORMATIVE_MARKERS)
+    ]
 
     context = "\n\n".join(
         doc.page_content[:MAX_CHARS_PER_DOC]
         for doc in docs[:MAX_DOCS_FOR_CONTEXT]
     )
+
+    # If no documents were retrieved, return an explicit message instead
+    # of relying on the LLM to say "I don't have enough information." This
+    # makes it clear to the caller that the retriever returned zero hits.
+    if not context.strip():
+        return {
+            "query": query_text,
+            "retrieved_documents": [],
+            "llm_response": (
+                "No documents were retrieved from the collection/namespace. "
+                "Please verify the file was ingested into the correct user index and collection."
+            )
+        }
 
     chat = ChatGroq(
         model=GROQ_MODEL,
@@ -59,7 +84,8 @@ def query_pinecone(query_text, user_index, collection_name):
 
     prompt = f"""
 Answer ONLY using the context below.
-If insufficient, say you don't have enough information.
+If the question asks for an overview/summary, provide it from the context.
+Only say you don't have enough information when the context truly does not contain the answer.
 
 Context:
 {context}

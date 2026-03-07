@@ -15,6 +15,19 @@ import time
 import os
 
 load_dotenv()
+TESSERACT_CMD = os.getenv("TESSERACT_CMD", "").strip()
+if TESSERACT_CMD:
+    pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD
+else:
+    # Auto-detect common Windows installation paths to reduce setup friction.
+    default_windows_paths = [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+    ]
+    for candidate in default_windows_paths:
+        if os.path.exists(candidate):
+            pytesseract.pytesseract.tesseract_cmd = candidate
+            break
 
 # Initialize Pinecone
 try:
@@ -24,6 +37,9 @@ except Exception as e:
     pc = None
 
 from utils import sanitize_index_name
+
+OCR_UNAVAILABLE_MARKER = "OCR unavailable"
+IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 
 def create_pinecone_index(user):
@@ -108,11 +124,15 @@ def extract_text_from_image(image_path):
     """Extract text from an image using OCR. Returns empty string if tesseract unavailable."""
     try:
         image = Image.open(image_path)
-        return pytesseract.image_to_string(image)
+        text = pytesseract.image_to_string(image)
+        return text.strip()
+    except pytesseract.TesseractNotFoundError as e:
+        print(f"Warning: Tesseract not found: {e}")
+        return ""
     except Exception as e:
         print(f"Warning: Could not extract text from image (tesseract may not be installed): {e}")
-        # Return a note instead of failing completely
-        return f"[Image: {os.path.basename(image_path)} - OCR unavailable]"
+        # Return empty content so we don't index non-informational placeholders.
+        return ""
 
 def load_document(file_path):
     """Load a document from file."""
@@ -128,7 +148,7 @@ def load_document(file_path):
             loader = CSVLoader(file_path)
         elif file_path.endswith((".mp3", ".wav")):
             return transcribe_audio(file_path), []
-        elif file_path.endswith((".png", ".jpg", ".jpeg")):
+        elif file_path.endswith(IMAGE_EXTENSIONS):
             return [Document(page_content=extract_text_from_image(file_path))], []
         else:
             raise ValueError("Unsupported file format")
@@ -205,8 +225,21 @@ def ingest_file(file_path, user, collection):
         if not document:
             return False, "Failed to load document"
 
-        texts = split_text(document)
+        is_image_upload = file_path.lower().endswith(IMAGE_EXTENSIONS)
+        texts = document if is_image_upload else split_text(document)
+        # Keep only meaningful chunks; avoid indexing empty/noise text.
+        texts = [
+            doc for doc in texts
+            if getattr(doc, "page_content", "").strip()
+            and OCR_UNAVAILABLE_MARKER.lower() not in getattr(doc, "page_content", "").lower()
+        ]
         if not texts:
+            if is_image_upload:
+                return False, (
+                    "No readable text found in image. "
+                    "Install/configure Tesseract OCR (or set TESSERACT_CMD in backend .env), "
+                    "then re-upload."
+                )
             return False, "Failed to split document into chunks"
 
         print(f"Created {len(texts)} text chunks")
@@ -222,6 +255,9 @@ def ingest_file(file_path, user, collection):
         # Process images if present
         for image_path in image_paths:
             extracted_text = extract_text_from_image(image_path)
+            if not extracted_text.strip():
+                print(f"Skipping image '{image_path}' due to empty/unavailable OCR text")
+                continue
             image_doc = Document(
                 page_content=extracted_text, 
                 metadata={
