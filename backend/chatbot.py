@@ -13,14 +13,49 @@ chat_history = {}
 
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
-MAX_RETRIEVER_K = 2
-MAX_DOCS_FOR_CONTEXT = 2
-MAX_CHARS_PER_DOC = 1000
+MAX_RETRIEVER_K = 12
+MAX_DOCS_FOR_CONTEXT = 8
+MAX_CHARS_PER_DOC = 2000
+NON_INFORMATIVE_MARKERS = [
+    "ocr unavailable",
+    "image:",
+]
+SUMMARY_KEYWORDS = (
+    "summary",
+    "summarize",
+    "overview",
+    "all",
+    "entire",
+    "whole",
+    "full",
+)
 
 # ✅ ONE embedding model for EVERYTHING
 EMBEDDINGS = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
+
+
+def build_context(docs, query_text):
+    lowered_query = query_text.lower()
+    summary_mode = any(keyword in lowered_query for keyword in SUMMARY_KEYWORDS)
+    max_docs = 12 if summary_mode else MAX_DOCS_FOR_CONTEXT
+    max_chars_per_doc = 2500 if summary_mode else MAX_CHARS_PER_DOC
+
+    context_parts = []
+    for doc in docs[:max_docs]:
+        metadata = getattr(doc, "metadata", {}) or {}
+        source_bits = []
+        if metadata.get("filename"):
+            source_bits.append(f"file={metadata['filename']}")
+        if metadata.get("type"):
+            source_bits.append(f"type={metadata['type']}")
+
+        source_prefix = f"[{' | '.join(source_bits)}]\n" if source_bits else ""
+        context_parts.append(f"{source_prefix}{doc.page_content[:max_chars_per_doc]}")
+
+    return "\n\n".join(context_parts)
+
 
 def query_pinecone(query_text, user_index, collection_name):
 
@@ -40,16 +75,34 @@ def query_pinecone(query_text, user_index, collection_name):
     # Retrieve documents
     docs_with_score = vectorstore.similarity_search_with_score(
         query_text,
-        k=MAX_RETRIEVER_K
+        k=16 if any(keyword in query_text.lower() for keyword in SUMMARY_KEYWORDS) else MAX_RETRIEVER_K
     )
 
-    docs_with_score.sort(key=lambda x: x[1])
+    # Pinecone similarity scores are higher for better matches (cosine metric),
+    # so we sort descending to keep the most relevant chunks first.
+    docs_with_score.sort(key=lambda x: x[1], reverse=True)
     docs = [doc for doc, _ in docs_with_score]
+    # Ignore retrieval hits that are just OCR failure placeholders or empty text.
+    docs = [
+        doc for doc in docs
+        if doc.page_content.strip()
+        and not any(marker in doc.page_content.lower() for marker in NON_INFORMATIVE_MARKERS)
+    ]
 
-    context = "\n\n".join(
-        doc.page_content[:MAX_CHARS_PER_DOC]
-        for doc in docs[:MAX_DOCS_FOR_CONTEXT]
-    )
+    context = build_context(docs, query_text)
+
+    # If no documents were retrieved, return an explicit message instead
+    # of relying on the LLM to say "I don't have enough information." This
+    # makes it clear to the caller that the retriever returned zero hits.
+    if not context.strip():
+        return {
+            "query": query_text,
+            "retrieved_documents": [],
+            "llm_response": (
+                "No documents were retrieved from the collection/namespace. "
+                "Please verify the file was ingested into the correct user index and collection."
+            )
+        }
 
     chat = ChatGroq(
         model=GROQ_MODEL,
@@ -59,7 +112,9 @@ def query_pinecone(query_text, user_index, collection_name):
 
     prompt = f"""
 Answer ONLY using the context below.
-If insufficient, say you don't have enough information.
+If the question asks for an overview/summary, provide it from the context.
+For CSV and audio/video transcript questions, synthesize across all retrieved chunks before answering.
+Only say you don't have enough information when the context truly does not contain the answer.
 
 Context:
 {context}

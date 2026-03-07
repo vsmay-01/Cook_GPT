@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import os
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from chatbot import * 
 from ingestion import * 
@@ -16,6 +17,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 load_dotenv()
 os.makedirs("uploads", exist_ok=True)
+SUPPORTED_UPLOAD_TYPES = tuple(sorted(get_supported_extensions()))
 
 @app.route("/", methods=["GET"])
 def home():
@@ -40,8 +42,19 @@ def upload_file():
     file = request.files["file"]
     if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
-    
-    file_path = os.path.join("uploads", file.filename)
+
+    safe_filename = secure_filename(file.filename)
+    if not safe_filename:
+        return jsonify({"error": "Invalid filename"}), 400
+    if not is_supported_file(safe_filename):
+        return jsonify({
+            "error": (
+                "Unsupported file type. Supported extensions: "
+                + ", ".join(SUPPORTED_UPLOAD_TYPES)
+            )
+        }), 400
+
+    file_path = os.path.join("uploads", safe_filename)
     try:
         file.save(file_path)
 

@@ -4,6 +4,8 @@ import { useUser } from "@clerk/clerk-react";
 import { SelectedCollectionContext } from "../../context/SelectedContext"; // Ensure this path is correct
 import Loader from "./Loader";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const ACCEPTED_FILE_TYPES =
+  ".pdf,.txt,.csv,.png,.jpg,.jpeg,.wav,.aiff,.aif,.flac,.mp3,.m4a,.aac,.ogg,.wma,.mp4,.mov,.avi,.mkv,.webm,.m4v";
 
 export default function Sidebar() {
   const context = useContext(SelectedCollectionContext);
@@ -224,7 +226,7 @@ export default function Sidebar() {
       {/* Upload Section (Fixed to the Bottom with Bottom Margin) */}
       <div className="mt-6 p-4 rounded-lg bg-[#292929] shadow-lg">
         <h2 className="text-xl font-extrabold text-indigo-600 mb-3">
-          Upload Document
+          Upload File
         </h2>
 
         {/* Collection Name Input */}
@@ -240,12 +242,21 @@ export default function Sidebar() {
         <div className="flex items-center space-x-3 mt-3">
           <label className="flex items-center justify-center bg-[#383838] hover:bg-[#444444] text-gray-200 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200">
             📁
-            <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPTED_FILE_TYPES}
+              className="hidden"
+              onChange={handleFileChange}
+            />
           </label>
           <span className="text-sm text-gray-400">
             {file ? file.name : "No file selected"}
           </span>
         </div>
+        <p className="mt-2 text-xs text-gray-500">
+          Supports PDF, TXT, CSV, image, audio, and video files.
+        </p>
 
         {/* Upload Button */}
         <button
