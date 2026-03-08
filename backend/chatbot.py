@@ -2,7 +2,7 @@ import os
 import warnings
 from dotenv import load_dotenv
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from embeddings import get_embeddings
 from langchain_groq import ChatGroq
 from langchain_pinecone import PineconeVectorStore
 
@@ -18,9 +18,6 @@ MAX_DOCS_FOR_CONTEXT = 2
 MAX_CHARS_PER_DOC = 1000
 
 # ✅ ONE embedding model for EVERYTHING
-EMBEDDINGS = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
 
 def query_pinecone(query_text, user_index, collection_name):
 
@@ -33,7 +30,7 @@ def query_pinecone(query_text, user_index, collection_name):
     # Pinecone vector store
     vectorstore = PineconeVectorStore(
         index_name=user_index,
-        embedding=EMBEDDINGS,
+        embedding=get_embeddings(),
         namespace=collection_name
     )
 
