@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useEffect, useState, useContext, useRef } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { API_URL } from "../../apiBaseUrl";
 import { SelectedCollectionContext } from "../../context/SelectedContext"; // Ensure this path is correct
 import Loader from "./Loader";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const ACCEPTED_FILE_TYPES =
   ".pdf,.txt,.csv,.png,.jpg,.jpeg,.wav,.aiff,.aif,.flac,.mp3,.m4a,.aac,.ogg,.wma,.mp4,.mov,.avi,.mkv,.webm,.m4v";
 

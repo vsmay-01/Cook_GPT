@@ -3,9 +3,9 @@ import axios from "axios";
 import { useUser } from "@clerk/clerk-react";
 import { SelectedCollectionContext } from "../../context/SelectedContext";
 import { ChatResContext } from "../../context/ChatResContext";
+import { API_URL } from "../../apiBaseUrl";
 import ChatLoader from "./ChatLoader";
 import EmptyPage from "./EmptyPage";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export default function Dashboard() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
