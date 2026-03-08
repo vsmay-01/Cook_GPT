@@ -6,13 +6,13 @@ import uuid
 from dotenv import load_dotenv
 from langchain_community.document_loaders import CSVLoader, PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.documents import Document
 from pinecone import Pinecone, ServerlessSpec
 from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
+from embeddings import get_embeddings
 
 load_dotenv()
 TESSERACT_CMD = os.getenv("TESSERACT_CMD", "").strip()
@@ -352,11 +352,9 @@ def prepare_documents_for_embedding(file_path, documents):
     return split_text(documents, chunk_size=1200, chunk_overlap=150)
 
 def create_embeddings():
-    """Create an embedding model. Uses local Hugging Face embeddings for better performance."""
+    """Return a shared embedding model instance."""
     try:
-        return HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
-        )
+        return get_embeddings()
     except Exception as e:
         print(f"Error creating embeddings: {e}")
         return None
