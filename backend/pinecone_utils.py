@@ -30,18 +30,49 @@ def get_pinecone_index_info(user):
         else:
             stats_dict = dict(stats) if isinstance(stats, dict) else {}
         
-        # Extract namespaces and convert them to plain dicts
+        # Extract namespaces and get unique filenames from each
         namespaces = {}
         if "namespaces" in stats_dict:
             raw_namespaces = stats_dict["namespaces"]
             if isinstance(raw_namespaces, dict):
+                from embeddings import EMBEDDING_DIMENSION
+                dummy_vector = [0.0] * EMBEDDING_DIMENSION
+
                 for ns_name, ns_data in raw_namespaces.items():
+                    # Get vector count
                     if hasattr(ns_data, "__dict__"):
-                        namespaces[ns_name] = ns_data.__dict__
+                        ns_info = ns_data.__dict__
                     elif isinstance(ns_data, dict):
-                        namespaces[ns_name] = ns_data
+                        ns_info = ns_data
                     else:
-                        namespaces[ns_name] = {}
+                        ns_info = {}
+
+                    vector_count = ns_info.get("vector_count", 0)
+
+                    # Query namespace to get unique filenames from metadata
+                    files = []
+                    try:
+                        response = index.query(
+                            vector=dummy_vector,
+                            top_k=min(vector_count, 10000) if vector_count else 100,
+                            include_metadata=True,
+                            namespace=ns_name
+                        )
+                        seen_filenames = set()
+                        for match in response.get("matches", []):
+                            metadata = match.get("metadata", {})
+                            filename = metadata.get("filename")
+                            if filename and filename not in seen_filenames:
+                                seen_filenames.add(filename)
+                                files.append(filename)
+                    except Exception as query_err:
+                        print(f"Warning: Could not query namespace '{ns_name}' for filenames: {query_err}")
+
+                    namespaces[ns_name] = {
+                        "vector_count": vector_count,
+                        "files": files
+                    }
+
             stats_dict["namespaces"] = namespaces
         
         return stats_dict

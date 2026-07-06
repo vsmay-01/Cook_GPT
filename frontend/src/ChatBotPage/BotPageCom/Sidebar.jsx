@@ -139,10 +139,9 @@ export default function Sidebar() {
   };
 
   const getFilesForCollection = (collection) => {
-    // Return vector count for the collection instead of files list
     if (collectionsData[collection]) {
-      const vectorCount = collectionsData[collection].vector_count || 0;
-      return [`Vectors: ${vectorCount}`];
+      const files = collectionsData[collection].files || [];
+      return files.length > 0 ? files : ["No files"];
     }
     return [];
   };
