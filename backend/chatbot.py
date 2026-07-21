@@ -11,7 +11,15 @@ load_dotenv()
 
 chat_history = {}
 
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+def initialize_chatbot(user_index, collection_name):
+    """Initialize chatbot for a specific user's index."""
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001", google_api_key=os.getenv("GOOGLE_API_KEY"))
+    
+    vectorstore = PineconeVectorStore(
+        index_name=user_index, embedding=embeddings, namespace=collection_name
+    )
+    
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})  # Retrieve top 5 documents
 
 MAX_RETRIEVER_K = 2
 MAX_DOCS_FOR_CONTEXT = 2
@@ -61,26 +69,4 @@ If insufficient, say you don't have enough information.
 Context:
 {context}
 
-Question:
-{query_text}
-"""
-
-    response = chat.invoke(prompt)
-    answer = response.content if hasattr(response, "content") else str(response)
-
-    chat_history[user_index][collection_name].append(
-        (query_text, answer)
-    )
-
-    return {
-        "query": query_text,
-        "retrieved_documents": [
-            {
-                "content": doc.page_content,
-                "metadata": doc.metadata,
-                "score": score
-            }
-            for doc, score in docs_with_score
-        ],
-        "llm_response": answer
-    }
+    return detailed_response

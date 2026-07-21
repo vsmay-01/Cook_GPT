@@ -354,7 +354,10 @@ def prepare_documents_for_embedding(file_path, documents):
 def create_embeddings():
     """Create a Gemini embedding client shared across requests."""
     try:
-        return get_embeddings()
+        return GoogleGenerativeAIEmbeddings(
+            model="models/gemini-embedding-001", 
+            google_api_key=os.getenv("GOOGLE_API_KEY")
+        )
     except Exception as e:
         print(f"Error creating embeddings: {e}")
         return None
@@ -449,5 +452,4 @@ def ingest_file(file_path, user, collection):
         os.remove(file_path)
         return True, f"File processed and stored successfully with vector IDs: {vector_ids}"
     except Exception as e:
-        print(f"Error ingesting file: {e}")
-        return False, f"Error ingesting file: {e}"
+        return False, f"Processed file "
